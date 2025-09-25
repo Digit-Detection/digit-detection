@@ -1,0 +1,4 @@
+[submodule "lib/wxWidgets"]
+	path = lib/wxWidgets
+	url = https://github.com/wxWidgets/wxWidgets.git
+	branch = 3.2.8-hotfix
