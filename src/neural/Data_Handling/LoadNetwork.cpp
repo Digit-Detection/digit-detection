@@ -8,7 +8,7 @@ void LoadNetwork::Save(std::ostream& file) const {
     
     // Dynamically allocated members
     if (this->layer_sizes != nullptr && this->layers_length > 0) {
-        file.write(reinterpret_cast<const char*>(&this->layer_sizes), (this->layers_length) * sizeof(int));
+        file.write(reinterpret_cast<const char*>(this->layer_sizes), (this->layers_length + 1) * sizeof(int));
     }
     
     CostType type = this->cost ? this->cost->get_activation()->GetType() : CostType::crossEntropy;

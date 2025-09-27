@@ -12,10 +12,10 @@ void LoadLayer::Save(std::ostream& file) const {
     
     // Dynamically allocated members
     if (this->weights != nullptr && this->len_weights > 0) {
-        file.write(reinterpret_cast<const char*>(weights), sizeof(double) * this->len_weights);
+        file.write(reinterpret_cast<const char*>(this->weights), sizeof(double) * this->len_weights);
     }
     if (this->biases != nullptr && this->len_biases > 0) {
-        file.write(reinterpret_cast<const char*>(biases),  sizeof(double) * this->len_biases);
+        file.write(reinterpret_cast<const char*>(this->biases),  sizeof(double) * this->len_biases);
     }
     
     ActivationType type = this->activation ? this->activation->get_activation()->GetType() : ActivationType::sigmoid;
@@ -37,11 +37,11 @@ void LoadLayer::Load(std::istream& file) {
     // Dynamically allocated members
     if (this->len_weights > 0) {
         this->weights = new double[this->len_weights];
-        file.read(reinterpret_cast<char*>(&this->weights), this->len_weights * sizeof(double));
+        file.read(reinterpret_cast<char*>(this->weights), this->len_weights * sizeof(double));
     }
     if (this->len_biases > 0) {
         this->biases = new double[this->len_biases];
-        file.read(reinterpret_cast<char*>(&this->biases), this->len_biases * sizeof(double));
+        file.read(reinterpret_cast<char*>(this->biases), this->len_biases * sizeof(double));
     }
     ActivationType type;
     file.read(reinterpret_cast<char*>(&type), sizeof(ActivationType));
