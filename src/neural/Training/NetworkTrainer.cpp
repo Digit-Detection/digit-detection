@@ -68,6 +68,8 @@ void NetworkTrainer::StartTrainingSession(int num_epochs) {
     NeuralNetwork* prev_network = network_data.LoadNetworkFromSaved();
     EvaluationData* validation_eval = this->evaluator.Evaluate(neural_network, this->validation_data, this->validation_data_length);
     network_data.SaveNetworkToSaved(neural_network, validation_eval->get_num_correct() / (double)validation_eval->get_total());
+    
+    delete prev_network;
     delete validation_eval;
     delete neural_network;
 }

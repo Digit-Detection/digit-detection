@@ -38,6 +38,7 @@ NeuralNetwork::NeuralNetwork(LoadNetwork* network_params) {
         this->layers[i] = new Layer(network_params->layers[i]);
     }
 
+    this->output_layer_size = layer_sizes[this->layers_length];
     this->cost = new CallCost(network_params->cost->get_activation()->GetType());
     this->batch_learn_data = nullptr; 
     this->batch_learn_data_length = 0;

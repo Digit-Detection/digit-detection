@@ -49,9 +49,9 @@ void LoadNetwork::Save(const LoadNetwork& data, const std::string& filename) {
 LoadNetwork* LoadNetwork::Load(const std::string& filename) {
     std::ifstream file(filename, std::ios::binary);
     if (!file) throw std::runtime_error("Failed to open file for reading");
-    auto* net = new LoadNetwork;
-    net->Load(file);
-    return net;
+    LoadNetwork* network = new LoadNetwork;
+    network->Load(file);
+    return network;
 }
 
 LoadNetwork::~LoadNetwork() {

@@ -1,9 +1,11 @@
 #include "neural/Training/NetworkTrainer.h"
+#include "neural/Data_Handling/NetworkData.h"
 
 class NetworkTest {
     public:
         void runTests() {
             testSimpleData();
+            runLoadedData();
         }
     private:
         void testSimpleData() {
@@ -48,12 +50,53 @@ class NetworkTest {
             network_trainer.LoadData();
             network_trainer.StartTrainingSession(20);
 
-            // ----- Clean up -----
+            // Clean Up
             for (int i = 0; i < N; ++i) {
                 delete data[i];
             }
             delete[] data;
             delete[] layer_sizes;
+        }
+
+        void runLoadedData() {
+            NetworkData network_data = NetworkData();
+            NeuralNetwork* network = network_data.LoadNetworkFromSaved();
+            NetworkEvaluator evaluator = NetworkEvaluator();
+
+            const int N = 200;
+            DataPoint** data = new DataPoint*[N];
+
+            // Splitting of 25 Negatives (label 0)
+            for (int i = 0; i < N/2; ++i) {
+                double* inputs = new double[2];
+                // Sample values that SHOULD give label 0
+                // roughly centered and normalized to [-1,1]
+                inputs[0] = ((double)rand() / RAND_MAX) * 0.8 - 0.4;
+                inputs[1] = ((double)rand() / RAND_MAX) * 0.8 - 0.4;
+                data[i] = new DataPoint(inputs, 2, 0, 2);
+                delete[] inputs;
+            }
+
+            // 25 Positives (label 1)
+            for (int i = N/2; i < N; ++i) {
+                double* inputs = new double[2];
+                // Sample values that SHOULD give label 1
+                inputs[0] = ((double)rand() / RAND_MAX) * 0.8 + 0.5;
+                inputs[1] = ((double)rand() / RAND_MAX) * 0.8 + 0.5;
+                data[i] = new DataPoint(inputs, 2, 1, 2);
+                delete[] inputs;
+            }
+            
+            EvaluationData* validation_eval = evaluator.Evaluate(network, data, N);
+
+            std::cout << validation_eval->get_num_correct() / (double)validation_eval->get_total() * 100.0 << "%" << std::endl;
+
+            // Clean Up
+            for (int i = 0; i < N; ++i) {
+                delete data[i];
+            }
+            delete[] data;
+            delete network;
         }
 
 };

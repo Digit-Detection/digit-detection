@@ -33,13 +33,21 @@ Layer::Layer(int num_input_nodes, int num_output_nodes) {
 Layer::Layer(LoadLayer* layer_params) {
     // Construction using shallow copying of LoadLayer, which arrays are already allocated on the heap, shallow copying
     this->num_input_nodes = layer_params->num_input_nodes;
-    this->num_input_nodes = layer_params->num_output_nodes;
-    this->activation = layer_params->activation;
+    this->num_output_nodes = layer_params->num_output_nodes;
+    this->activation = new CallActivation(layer_params->activation->get_activation()->GetType());
 
     this->len_weights = layer_params->len_weights;
     this->len_biases = layer_params->len_biases;
-    this->weights = layer_params->weights;
-    this->biases = layer_params->biases;
+
+    this->weights = new double[this->len_weights];
+    for (int i = 0; i < this->len_weights; i++) {
+        this->weights[i] = layer_params->weights[i];
+    }
+
+    this->biases = new double[this->len_biases];
+    for (int i = 0; i < this->len_biases; i++) {
+        this->biases[i] = layer_params->biases[i];
+    }
 
     this->cost_gradient_w = new double[this->len_weights];
     this->cost_gradient_b = new double[this->len_biases];

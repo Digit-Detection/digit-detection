@@ -32,7 +32,7 @@ NeuralNetwork* NetworkData::LoadNetworkFromSaved() {
     NeuralNetwork* network = new NeuralNetwork(loader);
 
     delete loader;
-    
+
     return network;
 }
 
@@ -58,6 +58,9 @@ void NetworkData::SaveNetworkToSaved(NeuralNetwork* network, double new_accuracy
     saver->Save(file);
 
     this->accuracy = new_accuracy;
+
+    // Confirmation Message
+    std::cout << "Saved the current network!" << std::endl;
 
     // Clean up
     delete saver;
