@@ -1,4 +1,3 @@
-#include <iostream>
 #include "neural/Training/NetworkTrainer.h"
 
 class NetworkTest {

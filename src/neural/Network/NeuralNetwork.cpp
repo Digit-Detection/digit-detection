@@ -22,6 +22,36 @@ NeuralNetwork::NeuralNetwork(int* layer_sizes, int num_layers) {
     this->batch_learn_data = nullptr; 
     this->batch_learn_data_length = 0;
 }
+
+NeuralNetwork::NeuralNetwork(LoadNetwork* network_params) {
+    this->layer_sizes = network_params->layer_sizes;
+    this->layers_length = network_params->layers_length;
+    this->layers = new Layer*[this->layers_length];
+    for (int i = 0; i < this->layers_length; i++) {
+        this->layers[i] = new Layer(network_params->layers[i]);
+    }
+
+    this->cost = network_params->cost;
+    this->batch_learn_data = nullptr; 
+    this->batch_learn_data_length = 0;
+
+    // Deleting of individual LoadLayer objects are done inside the Layer constructor
+    delete[] network_params->layers;
+    delete network_params;
+}
+
+LoadNetwork* NeuralNetwork::get_network_data() {
+    LoadNetwork* network_params = new LoadNetwork();
+    network_params->layer_sizes = this->layer_sizes;
+    network_params->layers_length = this->layers_length;
+    network_params->layers = new LoadLayer*[this->layers_length];
+    for (int i = 0; i < this->layers_length; i++) {
+        network_params->layers[i] = this->layers[i]->get_layer_data();
+    }
+    network_params->cost = this->cost;
+
+    return network_params;
+}
         
 // Neural Network Output
         
@@ -74,7 +104,7 @@ void NeuralNetwork::Learn(DataPoint** training_data, int training_data_length, d
     }
 
     for (int i = 0; i < this->layers_length; i++) {
-        layers[i]->ApplyGradients(learn_rate / training_data_length, regularization, momentum);
+        this->layers[i]->ApplyGradients(learn_rate / training_data_length, regularization, momentum);
     }
 }
 
