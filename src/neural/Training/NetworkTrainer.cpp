@@ -4,6 +4,7 @@
 #include "neural/Network/NeuralNetwork.h"
 #include "neural/Network/NetworkSettings.h"
 #include "neural/Training/DatasetHandling.h"
+#include "neural/Data_Handling/NetworkData.h"
 
 
 NetworkTrainer::NetworkTrainer() {
@@ -62,6 +63,14 @@ void NetworkTrainer::StartTrainingSession(int num_epochs) {
         delete train_eval;
         delete validation_eval;
     }
+    // New network handling
+    NetworkData network_data = NetworkData();
+    NeuralNetwork* prev_network = network_data.LoadNetworkFromSaved();
+    EvaluationData* validation_eval = this->evaluator.Evaluate(neural_network, this->validation_data, this->validation_data_length);
+    network_data.SaveNetworkToSaved(neural_network, validation_eval->get_num_correct() / (double)validation_eval->get_total());
+    
+    delete prev_network;
+    delete validation_eval;
     delete neural_network;
 }
 

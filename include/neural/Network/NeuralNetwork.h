@@ -5,6 +5,7 @@
 #include "neural/Activation_Functions/CallCost.h"
 #include "neural/Learning_Data/NetworkLearningData.h"
 #include "neural/Data_Handling/DataPoint.h"
+#include "neural/Data_Handling/LoadNetwork.h"
 
 class NeuralNetwork {
     private:
@@ -18,6 +19,11 @@ class NeuralNetwork {
         int output_layer_size;
     public:
         NeuralNetwork(int* layer_sizes, int num_layers);
+        NeuralNetwork(LoadNetwork* network_params);
+
+        // Saving network function
+        LoadNetwork* get_network_data();
+
         // Neural Network Output
         std::pair<int, double*> Run(double* inputs);
         int max_value_index(double* values);

@@ -4,6 +4,7 @@
 #include "neural/Activation_Functions/CallActivation.h"
 #include "neural/Learning_Data/LayerLearningData.h"
 #include "neural/Activation_Functions/Costs.h"
+#include "neural/Data_Handling/LoadLayer.h"
 
 
 class Layer {
@@ -26,8 +27,10 @@ class Layer {
         CallActivation* activation;
     public:
         Layer(int num_input_nodes, int num_output_nodes);
+        Layer(LoadLayer* layer_params);
 
         //Encapsulation Methods
+        LoadLayer* get_layer_data();
         int get_num_input_nodes();
         int get_num_output_nodes();
         void set_activation(Activations* activation);
