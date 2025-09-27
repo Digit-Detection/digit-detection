@@ -17,6 +17,7 @@ struct LoadNetwork {
     // Save / Load to an existing stream
     void Save(std::ostream& file) const;
     void Load(std::istream& file);
+    ~LoadNetwork();
 };
 
 #endif

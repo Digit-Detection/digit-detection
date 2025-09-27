@@ -55,7 +55,6 @@ Layer::Layer(LoadLayer* layer_params) {
         this->cost_gradient_b[i] = 0.0;
         this->bias_vels[i] = 0.0;
     }
-    delete layer_params;
 }
 
 LoadLayer* Layer::get_layer_data() {
@@ -63,11 +62,18 @@ LoadLayer* Layer::get_layer_data() {
     LoadLayer* layer_params = new LoadLayer();
     layer_params->num_input_nodes = this->num_input_nodes;
     layer_params->num_output_nodes = this->num_output_nodes;
-    layer_params->activation = this->activation;
     layer_params->len_weights = this->len_weights;
     layer_params->len_biases = this->len_biases;
-    layer_params->weights = this->weights;
-    layer_params->biases = this->biases;
+
+    layer_params->weights = new double[this->len_weights];
+    for (int i = 0; i < this->len_weights; i++) {
+        layer_params->weights[i] = this->weights[i];
+    }
+    layer_params->biases = new double[this->len_biases];
+    for (int i = 0; i < this->len_biases; i++) {
+        layer_params->biases[i] = this->biases[i];
+    }
+    layer_params->activation = new CallActivation(this->activation->get_activation()->GetType());
     
     return layer_params;
 }

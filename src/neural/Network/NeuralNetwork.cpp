@@ -7,7 +7,10 @@
 
 
 NeuralNetwork::NeuralNetwork(int* layer_sizes, int num_layers) {
-    this->layer_sizes = layer_sizes;
+    this->layer_sizes = new int[num_layers];
+    for (int i = 0; i < num_layers; i++) {
+        this->layer_sizes[i] = layer_sizes[i];
+    }
     this->layers_length = num_layers - 1;
     // RNG seed
     srand(static_cast<unsigned int>(time(0)));
@@ -24,31 +27,36 @@ NeuralNetwork::NeuralNetwork(int* layer_sizes, int num_layers) {
 }
 
 NeuralNetwork::NeuralNetwork(LoadNetwork* network_params) {
-    this->layer_sizes = network_params->layer_sizes;
     this->layers_length = network_params->layers_length;
+    this->layer_sizes = new int[this->layers_length + 1];
+    for (int i = 0; i <= this->layers_length; i++) {
+        this->layer_sizes[i] = network_params->layer_sizes[i];
+    }
+    
     this->layers = new Layer*[this->layers_length];
     for (int i = 0; i < this->layers_length; i++) {
         this->layers[i] = new Layer(network_params->layers[i]);
     }
 
-    this->cost = network_params->cost;
+    this->cost = new CallCost(network_params->cost->get_activation()->GetType());
     this->batch_learn_data = nullptr; 
     this->batch_learn_data_length = 0;
-
-    // Deleting of individual LoadLayer objects are done inside the Layer constructor
-    delete[] network_params->layers;
-    delete network_params;
 }
 
 LoadNetwork* NeuralNetwork::get_network_data() {
+    // Deep copy everything
     LoadNetwork* network_params = new LoadNetwork();
-    network_params->layer_sizes = this->layer_sizes;
+    network_params->layer_sizes = new int[this->layers_length + 1];
+    for (int i = 0; i <= this->layers_length; i++) {
+        network_params->layer_sizes[i] = this->layer_sizes[i];
+    }
     network_params->layers_length = this->layers_length;
     network_params->layers = new LoadLayer*[this->layers_length];
     for (int i = 0; i < this->layers_length; i++) {
         network_params->layers[i] = this->layers[i]->get_layer_data();
     }
-    network_params->cost = this->cost;
+
+    network_params->cost = new CallCost(this->cost->get_activation()->GetType());
 
     return network_params;
 }
@@ -163,7 +171,7 @@ NeuralNetwork::~NeuralNetwork() {
     for (int i = 0; i < this->batch_learn_data_length; i++) {
         delete this->batch_learn_data[i];
     }
-    //delete[] this->layer_sizes;
+    delete[] this->layer_sizes;
     delete this->cost;
     delete[] this->layers;
     delete[] this->batch_learn_data;

@@ -25,11 +25,14 @@ NeuralNetwork* NetworkData::LoadNetworkFromSaved() {
     file.read(reinterpret_cast<char*>(&this->accuracy), sizeof(double));
 
     // Network Loading
-    LoadNetwork loader;
-    loader.Load(file);
+    LoadNetwork* loader = new LoadNetwork;
+    loader->Load(file);
 
     // Reconstruct a usable NeuralNetwork from the LoadNetwork
-    NeuralNetwork* network = new NeuralNetwork(&loader);
+    NeuralNetwork* network = new NeuralNetwork(loader);
+
+    delete loader;
+    
     return network;
 }
 
@@ -57,9 +60,5 @@ void NetworkData::SaveNetworkToSaved(NeuralNetwork* network, double new_accuracy
     this->accuracy = new_accuracy;
 
     // Clean up
-    for (int i = 0; i < saver->layers_length; i++) {
-        delete saver->layers[i];
-    }
-    delete[] saver->layers;
     delete saver;
 }

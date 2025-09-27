@@ -64,3 +64,15 @@ LoadLayer* LoadLayer::Load(const std::string& filename) {
     layer->Load(file);
     return layer;
 }
+
+LoadLayer::~LoadLayer() {
+    if (this->weights != nullptr) {
+        delete[] this->weights;
+    }
+    if (this->biases != nullptr) {
+        delete[] this->biases;
+    }
+    if (this->activation != nullptr) {
+        delete this->activation;
+    }
+}

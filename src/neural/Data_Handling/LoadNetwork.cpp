@@ -53,3 +53,15 @@ LoadNetwork* LoadNetwork::Load(const std::string& filename) {
     net->Load(file);
     return net;
 }
+
+LoadNetwork::~LoadNetwork() {
+    if (layers) {
+        for (int i = 0; i < layers_length; i++) { 
+            delete layers[i];
+        }
+        delete[] layers; 
+    }
+
+    delete[] layer_sizes;
+    delete cost;
+}

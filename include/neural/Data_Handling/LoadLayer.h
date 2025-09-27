@@ -19,6 +19,7 @@ struct LoadLayer {
     // Save/Load to a stream (used by LoadNetwork)
     void Save(std::ostream& file) const;
     void Load(std::istream& file);
+    ~LoadLayer();
 };
 
 #endif
