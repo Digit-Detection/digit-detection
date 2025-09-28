@@ -26,7 +26,64 @@ Layer::Layer(int num_input_nodes, int num_output_nodes) {
     for (int i = 0; i < this->len_biases; i++) {
         this->biases[i] = 0.0;
         this->cost_gradient_b[i] = 0.0;
+        this->bias_vels[i] = 0.0;
     }
+}
+
+Layer::Layer(LoadLayer* layer_params) {
+    // Construction using shallow copying of LoadLayer, which arrays are already allocated on the heap, shallow copying
+    this->num_input_nodes = layer_params->num_input_nodes;
+    this->num_output_nodes = layer_params->num_output_nodes;
+    this->activation = new CallActivation(layer_params->activation->get_activation()->GetType());
+
+    this->len_weights = layer_params->len_weights;
+    this->len_biases = layer_params->len_biases;
+
+    this->weights = new double[this->len_weights];
+    for (int i = 0; i < this->len_weights; i++) {
+        this->weights[i] = layer_params->weights[i];
+    }
+
+    this->biases = new double[this->len_biases];
+    for (int i = 0; i < this->len_biases; i++) {
+        this->biases[i] = layer_params->biases[i];
+    }
+
+    this->cost_gradient_w = new double[this->len_weights];
+    this->cost_gradient_b = new double[this->len_biases];
+    this->weight_vels = new double[this->len_weights];
+    this->bias_vels = new double[this->len_biases];
+
+    for (int i = 0; i < this->len_weights; i++) {
+        this->cost_gradient_w[i] = 0.0;
+        this->weight_vels[i] = 0.0;
+    }
+
+    for (int i = 0; i < this->len_biases; i++) {
+        this->cost_gradient_b[i] = 0.0;
+        this->bias_vels[i] = 0.0;
+    }
+}
+
+LoadLayer* Layer::get_layer_data() {
+    // Returns a loadlayer struct for saving the layer data
+    LoadLayer* layer_params = new LoadLayer();
+    layer_params->num_input_nodes = this->num_input_nodes;
+    layer_params->num_output_nodes = this->num_output_nodes;
+    layer_params->len_weights = this->len_weights;
+    layer_params->len_biases = this->len_biases;
+
+    layer_params->weights = new double[this->len_weights];
+    for (int i = 0; i < this->len_weights; i++) {
+        layer_params->weights[i] = this->weights[i];
+    }
+    layer_params->biases = new double[this->len_biases];
+    for (int i = 0; i < this->len_biases; i++) {
+        layer_params->biases[i] = this->biases[i];
+    }
+    layer_params->activation = new CallActivation(this->activation->get_activation()->GetType());
+    
+    return layer_params;
 }
 
 //Encapsulation Methods
@@ -69,6 +126,7 @@ void Layer::init_random_weights() {
         // Xavier/He
         this->weights[i] = ((static_cast<double>(rand()) / static_cast<double>(RAND_MAX)) * 2.0 - 1.0) * scale;
         this->cost_gradient_w[i] = 0.0;
+        this->weight_vels[i] = 0.0;
     }
 }
 
