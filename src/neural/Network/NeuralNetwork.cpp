@@ -97,7 +97,7 @@ double* NeuralNetwork::CalculateOutputs(double* inputs) {
 }
 
 // Learning
-void NeuralNetwork::Learn(DataPoint** training_data, int training_data_length, double learn_rate, double regularization, double momentum) {
+void NeuralNetwork::Learn(DataPoint** training_data, int training_data_length, double learn_rate, double regularisation, double momentum) {
     // LEARN Scripts
     // Initialize batch
     if (this->batch_learn_data == NULL || this->batch_learn_data_length != training_data_length) {
@@ -113,7 +113,7 @@ void NeuralNetwork::Learn(DataPoint** training_data, int training_data_length, d
     }
 
     for (int i = 0; i < this->layers_length; i++) {
-        this->layers[i]->ApplyGradients(learn_rate / training_data_length, regularization, momentum);
+        this->layers[i]->ApplyGradients(learn_rate / training_data_length, regularisation, momentum);
     }
 }
 
