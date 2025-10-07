@@ -46,7 +46,7 @@ void NetworkTrainer::StartTrainingSession(int num_epochs) {
     for (int epoch = 1; epoch <= num_epochs; epoch++) {
         for (int batch = 0; batch < this->num_training_batches; batch++) {
             neural_network->Learn(this->training_batches[batch]->get_data(), this->network_settings->get_mini_batch_size(), this->current_learn_rate, 
-                                this->network_settings->get_regularization(), this->network_settings->get_momentum());
+                                this->network_settings->get_regularisation(), this->network_settings->get_momentum());
         }
         this->epoch = epoch;
         // Evaluation
