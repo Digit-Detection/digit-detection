@@ -46,7 +46,7 @@ class Layer {
         std::pair<double*, int> Output(double* inputs, int inputs_length, LayerLearningData* learn_data);
 
         // Apply previously calculated gradients, updating weights and biases, and resetting the gradients
-        void ApplyGradients(double learn_rate, double regularization, double momentum);
+        void ApplyGradients(double learn_rate, double regularisation, double momentum);
 
         // Calculates node values for the output layer -> the partial derivative of the cost with respect to weighted input
         void OutputLayerNodeValues(LayerLearningData* learn_data, double* expected_outputs, Costs* cost);

@@ -6,7 +6,7 @@ NetworkSettings::NetworkSettings() {
     * Learn rate decay is typically 0.3 - 0.9 times less than learn rate
     * Batch size is typically a power of 2 from 2^4 - 2^8, depending on sample size
     * Momentum is typically 0.8 - 0.95
-    * Regularization is typically 1e-5 - 1e-3
+    * regularisation is typically 1e-5 - 1e-3
     * 
     * When using ReLU, learning rate needs to be lower, around 0.01 - 0.001
     * Pair softmax with crossEntropy with the best results

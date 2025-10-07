@@ -30,7 +30,7 @@ class NeuralNetwork {
         double* CalculateOutputs(double* inputs);
 
         // Learning
-        void Learn(DataPoint** training_data, int training_data_length, double learn_rate, double regularization = 0.0, double momentum = 0.0);
+        void Learn(DataPoint** training_data, int training_data_length, double learn_rate, double regularisation = 0.0, double momentum = 0.0);
         void update_gradients(DataPoint* data, NetworkLearningData* learn_data);
 
         // Setting functions

@@ -175,9 +175,9 @@ std::pair<double*, int> Layer::Output(double* inputs, int inputs_length, LayerLe
 }
 
 // Apply previously calculated gradients, updating weights and biases, and resetting the gradients
-void Layer::ApplyGradients(double learn_rate, double regularization, double momentum) {
+void Layer::ApplyGradients(double learn_rate, double regularisation, double momentum) {
     // Weight decay is for weight clipping in case those values are too extreme
-    double weight_decay = 1.0 - regularization * learn_rate;
+    double weight_decay = 1.0 - regularisation * learn_rate;
 
     // Applying to weight
     // w = (1 − ηλ)w + μv_(t−1) ​− η∇w (η: learn rate, λ: regulatization, μ: momentum, w: weight, ∇w: cost in change in weight)
