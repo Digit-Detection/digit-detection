@@ -18,7 +18,7 @@ class NetworkSettings {
         double learn_rate_decay;
         int mini_batch_size;
         double momentum;
-        double regularization;
+        double regularisation;
     
     public:
         NetworkSettings();
@@ -33,7 +33,7 @@ class NetworkSettings {
         double get_learn_rate_decay();
         int get_mini_batch_size();
         double get_momentum();
-        double get_regularization();
+        double get_regularisation();
         ~NetworkSettings();
 };
 

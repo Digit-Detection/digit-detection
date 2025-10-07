@@ -11,7 +11,7 @@ NetworkSettings::NetworkSettings() {
     * When using ReLU, learning rate needs to be lower, around 0.01 - 0.001
     * Pair softmax with crossEntropy with the best results
     * Try avoiding MeanSquaredError as it doesn't pair well with non-linear activations
-    * Generally these generalization problems: relu, softmax and crossEntropy will provide the best networks
+    * Generally these generalisation problems: relu, softmax and crossEntropy will provide the best networks
     */
     this->activation_type = new CallActivation(relu);
     this->output_activation_type = new CallActivation(softmax);
@@ -20,7 +20,7 @@ NetworkSettings::NetworkSettings() {
     this->learn_rate_decay = 0.009;
     this->mini_batch_size = 32;
     this->momentum = 0.9;
-    this->regularization = 0.0001;
+    this->regularisation = 0.0001;
 }
 
 void NetworkSettings::set_layer_sizes(int* layer_sizes) {
@@ -67,8 +67,8 @@ double NetworkSettings::get_momentum() {
     return this->momentum;
 }
         
-double NetworkSettings::get_regularization() {
-    return this->regularization;
+double NetworkSettings::get_regularisation() {
+    return this->regularisation;
 }
 
 NetworkSettings::~NetworkSettings() {
