@@ -34,7 +34,7 @@ class Canvas : public wxPanel{
         void OnPaint(wxPaintEvent& evt) {
             wxPaintDC dc(this);
             dc.Clear();
-            dc.SetPen(wxPen(*wxBLACK, 1));
+            dc.SetPen(wxPen(*wxBLACK, 12));
 
             for (int y = 0; y < CANY; ++y) {
                 for (int x = 0; x < CANX; ++x) {
