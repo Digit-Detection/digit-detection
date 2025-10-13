@@ -1,8 +1,6 @@
 #include <wx/wx.h>
 #include <vector>
-
-#include "Variables.h"
-// g++ myDrawTest.cpp `wx-config --cxxflags --libs`
+#include <wx/geometry.h>
 
 class Canvas : public wxPanel{
     public:
@@ -83,34 +81,3 @@ class Canvas : public wxPanel{
         
 
 };
-
-class Frame : public wxFrame {
-    public:
-        // Create unresizeable frame
-        Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName, wxDefaultPosition, wxSize(CANX * SCALE, CANY * SCALE), wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX)) {
-            myCanvas = new Canvas(this);
-            myCanvas->SetMinSize(wxSize(CANX * SCALE, CANY * SCALE));
-
-            wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-            sizer->Add(myCanvas, 0, wxALIGN_CENTER);
-            SetSizerAndFit(sizer);
-        }
-
-        ~Frame() {}
-    private:
-        Canvas* myCanvas;
-};
-
-class MainApp : public wxApp {
-    public:
-        bool OnInit() override {
-            this->myFrame = new Frame("Drawing Software");
-            this->myFrame->Show();
-            return true;
-        }
-        ~MainApp() {}
-    private: 
-        Frame* myFrame;
-};
-
-wxIMPLEMENT_APP(MainApp);
