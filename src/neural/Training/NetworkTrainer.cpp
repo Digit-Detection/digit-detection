@@ -12,8 +12,6 @@ NetworkTrainer::NetworkTrainer() {
     this->training_split = 0.8;
     this->network_settings = new NetworkSettings();
     this->defaultConstructed = true;
-    this->data_helper = DatasetHandling();
-    this->evaluator = NetworkEvaluator();
 
     this->current_learn_rate = this->network_settings->get_initial_learning_rate();
     this->data_loaded = false;
@@ -25,8 +23,6 @@ NetworkTrainer::NetworkTrainer(NetworkSettings* settings) {
     this->training_split = 0.8;
     this->network_settings = settings;
     this->defaultConstructed = false;
-    this->data_helper = DatasetHandling();
-    this->evaluator = NetworkEvaluator();
 
     this->current_learn_rate = this->network_settings->get_initial_learning_rate();
     this->data_loaded = false;
@@ -50,14 +46,14 @@ void NetworkTrainer::StartTrainingSession(int num_epochs) {
         }
         this->epoch = epoch;
         // Evaluation
-        EvaluationData* train_eval = this->evaluator.Evaluate(neural_network, this->training_data, this->training_data_length);
-        EvaluationData* validation_eval = this->evaluator.Evaluate(neural_network, this->validation_data, this->validation_data_length);
+        EvaluationData* train_eval = NetworkEvaluator::Evaluate(neural_network, this->training_data, this->training_data_length);
+        EvaluationData* validation_eval = NetworkEvaluator::Evaluate(neural_network, this->validation_data, this->validation_data_length);
         
         std::cout << "Epoch " << this->epoch << ": Training Accuracy: " << train_eval->get_num_correct() / (double)train_eval->get_total() * 100.0 << "% Validation Accuracy: " <<
         validation_eval->get_num_correct() / (double)validation_eval->get_total() * 100.0 << "%" << std::endl;
 
         // Next Epoch
-        this->data_helper.ShuffleBatches(this->training_batches, this->num_training_batches);
+        DatasetHandling::ShuffleBatches(this->training_batches, this->num_training_batches);
         this->current_learn_rate = (1.0 / (1.0 + this->network_settings->get_learn_rate_decay() * this->epoch)) * this->network_settings->get_initial_learning_rate();
 
         delete train_eval;
@@ -66,7 +62,7 @@ void NetworkTrainer::StartTrainingSession(int num_epochs) {
     // New network handling
     NetworkData network_data = NetworkData();
     NeuralNetwork* prev_network = network_data.LoadNetworkFromSaved();
-    EvaluationData* validation_eval = this->evaluator.Evaluate(neural_network, this->validation_data, this->validation_data_length);
+    EvaluationData* validation_eval = NetworkEvaluator::Evaluate(neural_network, this->validation_data, this->validation_data_length);
     network_data.SaveNetworkToSaved(neural_network, validation_eval->get_num_correct() / (double)validation_eval->get_total());
     
     delete prev_network;
@@ -80,13 +76,13 @@ void NetworkTrainer::LoadData() {
     //this->all_data = data.first;
     //this->all_data_length = data.second;
     
-    std::pair<std::pair<DataPoint**, int>, std::pair<DataPoint**, int>> result = this->data_helper.SplitData(this->all_data, this->all_data_length, this->training_split);
+    std::pair<std::pair<DataPoint**, int>, std::pair<DataPoint**, int>> result = DatasetHandling::SplitData(this->all_data, this->all_data_length, this->training_split);
     this->training_data = result.first.first;
     this->training_data_length = result.first.second;
     this->validation_data = result.second.first;
     this->validation_data_length = result.second.second;
 
-    std::pair<Batch**, int> result1 = this->data_helper.CreateMiniBatches(this->training_data, this->training_data_length, this->network_settings->get_mini_batch_size());
+    std::pair<Batch**, int> result1 = DatasetHandling::CreateMiniBatches(this->training_data, this->training_data_length, this->network_settings->get_mini_batch_size());
     this->training_batches = result1.first;
     this->num_training_batches = result1.second;
     this->data_loaded = true;

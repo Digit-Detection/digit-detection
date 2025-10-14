@@ -18,16 +18,17 @@ bool MainApp::OnInit() {
     NetworkTest network_test;
     network_test.runTests();
 
-    // === Create window ===
-    Frame* mainFrame = new Frame("Window Name");
-    // Inital window Size;
-    mainFrame->SetClientSize(800, 600);
-    // Center the window
-    mainFrame->Center();
+    // // === Create window ===
+    // Frame* mainFrame = new Frame("Window Name");
+    // // Inital window Size;
+    // mainFrame->SetClientSize(800, 600);
+    // // Center the window
+    // mainFrame->Center();
 
-    // Complet and Show the window
-    mainFrame->Show();
-    std::cout << "Window Running!" << std::endl;
+    // // Complet and Show the window
+    // mainFrame->Show();
+    // std::cout << "Window Running!" << std::endl;
+    std::cout << "FINISHED" << std::endl;
     return true;
 }
 

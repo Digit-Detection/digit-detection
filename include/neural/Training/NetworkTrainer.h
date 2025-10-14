@@ -7,8 +7,6 @@
 
 class NetworkTrainer {
     private:
-        DatasetHandling data_helper;
-        NetworkEvaluator evaluator;
         float training_split;
         NetworkSettings* network_settings;
         bool defaultConstructed; // For automatically deleting network_settings
