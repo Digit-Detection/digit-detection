@@ -6,7 +6,7 @@
 std::pair<std::pair<DataPoint**, int>, std::pair<DataPoint**, int>> DatasetHandling::SplitData(DataPoint** all_data, int all_data_length, float training_split, bool shuffle) {
     // Splits sample data into training data and testing data for the neural network
     if (shuffle) {
-        this->ShuffleArray(all_data, all_data_length);
+        ShuffleArray(all_data, all_data_length);
     }
     if (training_split > 1.0) {
         training_split = 1.0;
@@ -34,7 +34,7 @@ std::pair<std::pair<DataPoint**, int>, std::pair<DataPoint**, int>> DatasetHandl
 std::pair<Batch**, int> DatasetHandling::CreateMiniBatches(DataPoint** all_data, int all_data_length, int size, bool shuffle) {
     // Creates Batches for training data, this can optimise training
     if (shuffle) {
-        this->ShuffleArray(all_data, all_data_length);
+        ShuffleArray(all_data, all_data_length);
     }
 
     int num_batches = all_data_length / size;
@@ -52,7 +52,7 @@ std::pair<Batch**, int> DatasetHandling::CreateMiniBatches(DataPoint** all_data,
 }
         
 void DatasetHandling::ShuffleBatches(Batch** batches, int num_batches) {
-    this->ShuffleArray(batches, num_batches);
+    ShuffleArray(batches, num_batches);
 }
 
 template <typename T>

@@ -1,4 +1,4 @@
-#include "Canvas.h"
+#include "wxwidget/Canvas.h"
 
 /*
 private:
