@@ -1,4 +1,5 @@
 #include "neural/Network/NetworkSettings.h"
+#include "constants.h"
 
 NetworkSettings::NetworkSettings() {
     /* TIPS FOR USING NETWORK HYPER_PARAMETERS
@@ -13,14 +14,14 @@ NetworkSettings::NetworkSettings() {
     * Try avoiding MeanSquaredError as it doesn't pair well with non-linear activations
     * Generally these generalisation problems: relu, softmax and crossEntropy will provide the best networks
     */
-    this->activation_type = new CallActivation(relu);
-    this->output_activation_type = new CallActivation(softmax);
-    this->cost_type = new CallCost(crossEntropy);
-    this->initial_learning_rate = 0.01;
-    this->learn_rate_decay = 0.009;
-    this->mini_batch_size = 32;
-    this->momentum = 0.9;
-    this->regularisation = 0.0001;
+    this->activation_type = new CallActivation(CONSTANTS_H::activation_type);
+    this->output_activation_type = new CallActivation(CONSTANTS_H::output_activation_type);
+    this->cost_type = new CallCost(CONSTANTS_H::cost_type);
+    this->initial_learning_rate = CONSTANTS_H::initial_learning_rate;
+    this->learn_rate_decay = CONSTANTS_H::learn_rate_decay;
+    this->mini_batch_size = CONSTANTS_H::mini_batch_size;
+    this->momentum = CONSTANTS_H::momentum;
+    this->regularisation = CONSTANTS_H::regularisation;
 }
 
 void NetworkSettings::set_layer_sizes(int* layer_sizes) {
