@@ -6,5 +6,6 @@
 
 class Frame : public wxFrame {
 public:
-    Frame(std::string windowName);
+    Frame(std::string windowName); 
+    ~Frame() {}   
 };
