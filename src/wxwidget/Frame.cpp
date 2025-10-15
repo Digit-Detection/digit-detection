@@ -1,6 +1,7 @@
 #include "wxwidget/Frame.h"
 #include "wxwidget/Canvas.h"
 #include "wxwidget/UIButton/ClearButton.h"
+#include "wxwidget/UIButton/UndoButton.h"
 #include "wxwidget/UIButton/NumPad.h"
 #include "constants.h"
 
@@ -27,15 +28,21 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
         wxPanel* buttonPanel = new wxPanel(toolPanel, wxID_ANY);
         buttonPanel->SetBackgroundColour(wxColor(200, 200, 50));
         
-        // -- Clear Button --
+        // -- Clear Button/Undo --
         wxPanel* clearBPanel = new wxPanel(buttonPanel, wxID_ANY);
         clearBPanel->SetBackgroundColour(wxColor(200, 50, 50));
 
         ClearButton* clearButton = new ClearButton(clearBPanel, [drawCanvas]() {
             drawCanvas->ClearCanvas(); // Pass Function pointer
         });
-        wxBoxSizer* centerSizer = new wxBoxSizer(wxVERTICAL);
-        centerSizer->Add(clearButton, 0, wxALIGN_CENTER | wxALL, 1);
+
+        UndoButton* undoButton = new UndoButton(clearBPanel, [drawCanvas]() {
+            drawCanvas->RollBack();
+        });
+        
+        wxBoxSizer* centerSizer = new wxBoxSizer(wxHORIZONTAL);
+        centerSizer->Add(clearButton, 0, wxALIGN_CENTER | wxALL, 2);
+        centerSizer->Add(undoButton, 0, wxALIGN_CENTER | wxALL, 2);
         clearBPanel->SetSizerAndFit(centerSizer);
         
         // -- Submission Buttons -- 
