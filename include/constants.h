@@ -19,4 +19,6 @@ const int mini_batch_size = 32; // Batch size of learning data
 const double momentum = 0.9;    // Momentum of velocities in gradient descent
 const double regularisation = 0.0001;   // Regularisation constant for keeping velocities realistic, prevents overflow
 
+// DATA CONSTANTS
+const int NUMDIGITS = 10; // Record digits from 0 to 9 (10 digit total)
 #endif

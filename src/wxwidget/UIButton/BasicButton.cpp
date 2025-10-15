@@ -1,6 +1,6 @@
 #include <wx/wx.h>
 #include "wxwidget/UIButton/BasicButton.h"
-
+#include <iostream>
 BasicButton::BasicButton(wxWindow* parent, const std::string& buttonLabel)
     : wxButton(parent, wxID_ANY, buttonLabel)
 {
@@ -15,5 +15,5 @@ void BasicButton::BindEvents() {
 
 void BasicButton::OnClick(wxCommandEvent& event) {
     // Default behavior (can be overridden)
-    wxLogMessage("BasicButton clicked");
+    std::cout << "Basic Button Clicked" << std::endl;
 }
