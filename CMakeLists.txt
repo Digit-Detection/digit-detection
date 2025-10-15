@@ -11,7 +11,7 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
 )
 add_executable(Digit_Detection ${SOURCES})
 
-# Include your own headers
+# Include headers
 target_include_directories(Digit_Detection PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )

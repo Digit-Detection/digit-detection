@@ -1,10 +1,14 @@
 #pragma once
 #include "BasicButton.h"
 
-class ClearButton : public BasicButton {
+class ClearButton : public wxButton {
 public:
-    ClearButton(wxWindow parent, std::string buttonLabel);
+    ClearButton(wxWindow* parent, std::function<void()> onClick);
     ~ClearButton();
+
 private:
-    void OnClick() override;
+    std::function<void()> clearFunction;
+    void OnClick(wxCommandEvent& event);
+
+
 };

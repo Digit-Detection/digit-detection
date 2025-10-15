@@ -1,24 +1,27 @@
 #include "wxwidget/Canvas.h"
-
+#include "constants.h"
 /*
 private:
     int lastX;
     int lastY; // Last mouse pos
-    double grid[CANY][CANX]; // initialize Pixel size
+    double* grid;
     bool drawing; // Is holding left click
 */
 
 // Public functions
-Canvas::Canvas(wxFrame* parent) : 
+Canvas::Canvas(wxPanel* parent) : 
     wxPanel(parent, wxID_ANY, 
     wxDefaultPosition, 
-    wxSize(CANX * SCALE, CANY * SCALE)) 
+    wxSize(CONSTANTS_H::CANX * CONSTANTS_H::SCALE, CONSTANTS_H::CANY * CONSTANTS_H::SCALE)) 
     {   
         // Initialize Variables
         this->lastX = -1;
         this->lastY = -1;
-        this->grid[CANY][CANX] = {0}; // initialize empty state
         this->drawing = false; 
+        this->grid = new double[CONSTANTS_H::CANY * CONSTANTS_H::CANX];
+        for (int i = 0; i < CONSTANTS_H::CANY * CONSTANTS_H::CANX; i++) {
+            grid[i] = 0.0;
+        }
 
         // Default Canvas background color
         this->SetBackgroundColour(wxColour(wxColor(*wxWHITE)));
@@ -30,15 +33,21 @@ Canvas::Canvas(wxFrame* parent) :
         Bind(wxEVT_MOTION, &Canvas::OnMouseMove, this);
         Bind(wxEVT_PAINT, &Canvas::OnPaint, this);
     }
-Canvas::~Canvas() {}
+Canvas::~Canvas() {
+    delete[] grid;
+}
 
 // Private Functions
 void Canvas::OnMouseDown(wxMouseEvent& evt) {
     drawing = true;
+    int x = evt.GetX() / CONSTANTS_H::SCALE;
+    int y = evt.GetY() / CONSTANTS_H::SCALE;
+    grid[y * CONSTANTS_H::CANX + x] = 1;
+    Refresh();
 }
 bool Canvas::MouseRange(const int& y, const int& x) {
-    bool validY = (y >= 0) && (y < CANY);
-    bool validX = (x >= 0) && (x < CANX);
+    bool validY = (y >= 0) && (y < CONSTANTS_H::CANY);
+    bool validX = (x >= 0) && (x < CONSTANTS_H::CANX);
     return validY && validX;
 }
 
@@ -50,8 +59,8 @@ void Canvas::OnMouseUp(wxMouseEvent& evt) {
 
 void Canvas::OnMouseMove(wxMouseEvent& evt) {
     if (drawing) { // Mouse held
-        int x = evt.GetX() / SCALE;
-        int y = evt.GetY() / SCALE;
+        int x = evt.GetX() / CONSTANTS_H::SCALE;
+        int y = evt.GetY() / CONSTANTS_H::SCALE;
 
         if (lastX != -1 && lastY != -1) {
             // Bresenham's line algorithm
@@ -63,7 +72,7 @@ void Canvas::OnMouseMove(wxMouseEvent& evt) {
             int cx = lastX, cy = lastY;
             while (true) {
                 if (MouseRange(cy, cx)) {
-                    grid[cy][cx] = 1;
+                    grid[cy * CONSTANTS_H::CANX + cx] = 1;
                 }
 
                 if (cx == x && cy == y) break;
@@ -75,7 +84,7 @@ void Canvas::OnMouseMove(wxMouseEvent& evt) {
 
         } else {
             if (MouseRange(y, x)) {
-                grid[y][x] = 1;
+                grid[y * CONSTANTS_H::CANX + x] = 1;
             }
 
         }
@@ -94,12 +103,29 @@ void Canvas::OnPaint(wxPaintEvent& evt) {
     dc.SetPen(wxPen(*wxBLACK, 1)); // Border
     dc.SetBrush(wxBrush(wxColour(0, 0, 0))); // Fill
 
-    for (int y = 0; y < CANY; ++y) {
-        for (int x = 0; x < CANX; ++x) {
-            if (grid[y][x]) {
-                dc.DrawRectangle(x * SCALE, y * SCALE, SCALE, SCALE);
+    for (int y = 0; y < CONSTANTS_H::CANY; ++y) {
+        for (int x = 0; x < CONSTANTS_H::CANX; ++x) {
+            if (grid[y * CONSTANTS_H::CANX + x]) {
+                dc.DrawRectangle(x * CONSTANTS_H::SCALE, y * CONSTANTS_H::SCALE, CONSTANTS_H::SCALE, CONSTANTS_H::SCALE);
             }
         }
     }
+
 }   
 
+
+// Bindable
+void Canvas::ClearCanvas() {
+    for (int i = 0; i < CONSTANTS_H::CANX * CONSTANTS_H::CANY; i++) {
+        grid[i] = 0;
+    }
+    Refresh();
+}
+
+// encapsulation
+double* Canvas::get_grid() {
+    return this->grid;
+}
+bool Canvas::get_drawing_state() {
+    return this->drawing;
+}
