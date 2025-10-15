@@ -3,11 +3,11 @@
 #include "neural/Activation_Functions/ActivationType.h"
 #include "neural/Activation_Functions/CostType.h"
 
-// CANVAS CONSTANTS
+// GUI CONSTANTS
 const int CANY = 50; // Canvas Y size
 const int CANX = 50; // Canvas X size;
-const int SCALE = 10; // Canvas Size
-
+const int SCALE = 12; // Canvas Shown Scaled size
+const int TOOLSIZE = 200; // In pixels
 
 // NETWORK CONSTANTS
 const ActivationType activation_type = ActivationType::relu;    // Hidden Layers Activation Function

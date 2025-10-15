@@ -1,9 +1,14 @@
-// #include "wxwidget/UIButton/BasicButton.h"
+#include "wxwidget/UIButton/ClearButton.h"
 
-// class ClearButton : public BasicButton {
-// public:
-//     ClearButton(wxWindow parent, std::string buttonLabel);
-//     ~ClearButton();
-// private:
-//     void OnClick() override;
-// };
+ClearButton::ClearButton(wxWindow* parent, std::function<void()> onClick)
+    : wxButton(parent, wxID_ANY, "CLEAR"), clearFunction(onClick)
+{
+    Bind(wxEVT_BUTTON, &ClearButton::OnClick, this);
+}
+
+ClearButton::~ClearButton() {}
+
+void ClearButton::OnClick(wxCommandEvent& event) {
+    // std::cout << "Cleared" << std::endl;
+    if (clearFunction) clearFunction();
+}

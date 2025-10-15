@@ -1,11 +1,15 @@
 #pragma once
-#include <string>
 #include <wx/wx.h>
+#include <string>
 
 class BasicButton : public wxButton {
 public:
-    BasicButton(wxWindow parent, std::string buttonLabel);
-    ~BasicButton();
+    BasicButton(wxWindow* parent, const std::string& buttonLabel);
+    virtual ~BasicButton();
+
+protected:
+    virtual void OnClick(wxCommandEvent& event);
+
 private:
-    virtual void OnClick();
+    void BindEvents();
 };
