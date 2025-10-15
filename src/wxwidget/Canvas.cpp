@@ -6,6 +6,7 @@ private:
     int lastY; // Last mouse pos
     double* grid;
     bool drawing; // Is holding left click
+    deque<double*> drawingHistory;
 */
 
 // Public functions
@@ -22,6 +23,14 @@ Canvas::Canvas(wxPanel* parent) :
         for (int i = 0; i < CONSTANTS_H::CANY * CONSTANTS_H::CANX; i++) {
             grid[i] = 0.0;
         }
+        this->lastDrew = false;
+
+        // Create first history instance
+        double* copy = new double[CONSTANTS_H::CANY * CONSTANTS_H::CANX];
+        for (int i = 0; i < CONSTANTS_H::CANY * CONSTANTS_H::CANX; i++) {
+            copy[i] = grid[i];
+        }
+        this->drawingHistory.push_front(copy);
 
         // Default Canvas background color
         this->SetBackgroundColour(wxColour(wxColor(*wxWHITE)));
@@ -35,13 +44,20 @@ Canvas::Canvas(wxPanel* parent) :
     }
 Canvas::~Canvas() {
     delete[] grid;
+    while (!this->drawingHistory.empty()) {
+        double* item = this->drawingHistory.back();
+        this->drawingHistory.pop_back();
+        delete[] item;
+    }
 }
 
 // Private Functions
 void Canvas::OnMouseDown(wxMouseEvent& evt) {
+    //std::cout << "Mouse Down" << std::endl;
     drawing = true;
     int x = evt.GetX() / CONSTANTS_H::SCALE;
     int y = evt.GetY() / CONSTANTS_H::SCALE;
+    if (grid[y * CONSTANTS_H::CANX + x] == 0) this->lastDrew = true;
     grid[y * CONSTANTS_H::CANX + x] = 1;
     Refresh();
 }
@@ -52,9 +68,11 @@ bool Canvas::MouseRange(const int& y, const int& x) {
 }
 
 void Canvas::OnMouseUp(wxMouseEvent& evt) {
+    //std::cout << "Mouse Up" << std::endl;
     drawing = false;
     lastX = -1;
     lastY = -1;
+    StoreState();
 }
 
 void Canvas::OnMouseMove(wxMouseEvent& evt) {
@@ -72,6 +90,7 @@ void Canvas::OnMouseMove(wxMouseEvent& evt) {
             int cx = lastX, cy = lastY;
             while (true) {
                 if (MouseRange(cy, cx)) {
+                    if (grid[cy * CONSTANTS_H::CANX + cx] == 0) this->lastDrew = true;
                     grid[cy * CONSTANTS_H::CANX + cx] = 1;
                 }
 
@@ -84,6 +103,7 @@ void Canvas::OnMouseMove(wxMouseEvent& evt) {
 
         } else {
             if (MouseRange(y, x)) {
+                if (grid[y * CONSTANTS_H::CANX + x] == 0) this->lastDrew = true;
                 grid[y * CONSTANTS_H::CANX + x] = 1;
             }
 
@@ -113,13 +133,45 @@ void Canvas::OnPaint(wxPaintEvent& evt) {
 
 }   
 
+void Canvas::StoreState() {
+    if (this->lastDrew) {
+        this->lastDrew = false;
+        if (drawingHistory.size() >= 15) drawingHistory.pop_back(); // Keeps up to 15 states
+        double* copy = new double[CONSTANTS_H::CANY * CONSTANTS_H::CANX];
+        for (int i = 0; i < CONSTANTS_H::CANY * CONSTANTS_H::CANX; i++) {
+            copy[i] = grid[i];
+        }
+        this->drawingHistory.push_front(copy);
+    }   
+}
 
 // Bindable
 void Canvas::ClearCanvas() {
     for (int i = 0; i < CONSTANTS_H::CANX * CONSTANTS_H::CANY; i++) {
         grid[i] = 0;
     }
+    this->lastDrew = true;
     Refresh();
+    StoreState();
+}
+
+void Canvas::RollBack() {
+    // std::cout << "Rolled Back with history size " << this->drawingHistory.size() << std::endl;
+    if (this->drawingHistory.size() > 1) {
+        // Remove the current state from history
+        double* currentState = this->drawingHistory.front();
+        this->drawingHistory.pop_front();
+        delete[] currentState;
+        
+        // Copy data from previous state
+        double* previousState = this->drawingHistory.front();
+        for (int i = 0; i < CONSTANTS_H::CANY * CONSTANTS_H::CANX; i++) {
+            grid[i] = previousState[i];
+        }
+        
+        Refresh();
+    }
+    
 }
 
 // encapsulation
