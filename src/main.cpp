@@ -23,13 +23,19 @@ bool MainApp::OnInit() {
     network_test.runTests();
 
     // === Create window ===
+    std::cout << "completed 0" << std::endl;
+
     Frame* mainFrame = new Frame("Digit Detector");
     // Window Size;
+    std::cout << "completed 1" << std::endl;
     mainFrame->SetClientSize(canXSize, canYSize);
     // Center the window
     mainFrame->Center();
+    std::cout << "completed 2" << std::endl;
+
     // Complet and Show the window
     mainFrame->Show();
+    std::cout << "completed 3" << std::endl;
 
     std::cout << "COMPLETE!" << std::endl;
     return true;

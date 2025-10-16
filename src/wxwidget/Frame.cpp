@@ -62,14 +62,7 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
         NumPad* submissionPad = new NumPad(numPanel, drawCanvas->get_grid());
         
         // =========== Develop Leaderboard ===========
-        wxPanel* leaderPanel = new wxPanel(toolPanel, wxID_ANY);
-        leaderPanel->SetBackgroundColour(wxColor(255, 255, 255));
-
-        this->leaderboard = new Leaderboard(leaderPanel);
-
-        wxBoxSizer* leaderSizer = new wxBoxSizer(wxVERTICAL);
-        leaderSizer->Add(this->leaderboard, 1, wxEXPAND | wxALL, 2);
-        toolPanel->SetSizerAndFit(leaderSizer);
+        this->leaderboard = new Leaderboard(toolPanel);
 
         // =========== Apply Changes ===============
         // Horizontal (Main) Sizer
@@ -81,7 +74,7 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
         // Vertical (Tool) Sizer
         wxBoxSizer* toolSizer = new wxBoxSizer(wxVERTICAL);
         toolSizer->Add(buttonPanel, 4, wxEXPAND); // 40%
-        toolSizer->Add(leaderPanel, 6, wxEXPAND); // 60%
+        toolSizer->Add(leaderboard, 6, wxEXPAND); // 60%
         toolPanel->SetSizerAndFit(toolSizer);
 
         // Vertical (Button) Sizer
