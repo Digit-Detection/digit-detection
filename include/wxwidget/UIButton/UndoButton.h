@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include "BasicButton.h"
 
 class UndoButton : public wxButton {
