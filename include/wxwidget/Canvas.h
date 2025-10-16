@@ -3,10 +3,11 @@
 #include <wx/geometry.h>
 #include "constants.h"
 #include <deque>
+#include <functional>
 class Canvas : public wxPanel{
     public:
         // Parent window, 
-        Canvas(wxPanel* parent);
+        Canvas(wxPanel* parent, std::function<void(double*)> updateLeaderboardFunc);
         ~Canvas();
 
         // Bindable
@@ -23,6 +24,7 @@ class Canvas : public wxPanel{
         bool drawing; // Is holding left click
         bool lastDrew; // Check if any changes to canvas has been made on last drew
         std::deque<double*> drawingHistory; // Store copies
+        std::function<void(double*)> updateLeaderboard;
 
         bool MouseRange(const int& y, const int& x);
         void OnMouseDown(wxMouseEvent& evt);

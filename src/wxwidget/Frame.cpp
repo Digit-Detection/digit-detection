@@ -4,6 +4,9 @@
 #include "wxwidget/UIButton/UndoButton.h"
 #include "wxwidget/UIButton/NumPad.h"
 #include "constants.h"
+#include <wx/scrolwin.h>
+#include <wx/sizer.h>
+#include <iostream>
 
 const int canvasHeight = CONSTANTS_H::CANY * CONSTANTS_H::SCALE;
 const int canvasWidth = CONSTANTS_H::CANX * CONSTANTS_H::SCALE;
@@ -12,6 +15,11 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
         wxSize(-1, -1), // Window Size (Default)
         wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX)) // Unresizeable
     {  
+        // ============ Link Neural ================
+        NetworkData neural;
+        this->network = neural.LoadNetworkFromSaved();  
+        std::cout << "Network Initialized" << std::endl; 
+
         // =========== Develop Containers ===========
         // Left Panel (Canvas)
         wxPanel* canvasPanel = new wxPanel(this, wxID_ANY);
@@ -22,8 +30,10 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
         toolPanel->SetBackgroundColour(wxColor(100, 200, 100));
         
         // =========== Develop Canvas ===========
-        Canvas* drawCanvas = new Canvas(canvasPanel);
-        
+        Canvas* drawCanvas = new Canvas(canvasPanel, [this](double* grid) {
+            this->UpdateLeaderboard(grid);
+        });
+
         // =========== Develop UI Buttons ===========
         wxPanel* buttonPanel = new wxPanel(toolPanel, wxID_ANY);
         buttonPanel->SetBackgroundColour(wxColor(200, 200, 50));
@@ -53,8 +63,14 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
         
         // =========== Develop Leaderboard ===========
         wxPanel* leaderPanel = new wxPanel(toolPanel, wxID_ANY);
-        leaderPanel->SetBackgroundColour(wxColor(0, 150, 0));
-        
+        leaderPanel->SetBackgroundColour(wxColor(255, 255, 255));
+
+        this->leaderboard = new Leaderboard(leaderPanel);
+
+        wxBoxSizer* leaderSizer = new wxBoxSizer(wxVERTICAL);
+        leaderSizer->Add(this->leaderboard, 1, wxEXPAND | wxALL, 2);
+        toolPanel->SetSizerAndFit(leaderSizer);
+
         // =========== Apply Changes ===============
         // Horizontal (Main) Sizer
         wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -73,7 +89,17 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
         buttonSizer->Add(clearBPanel, 3, wxEXPAND); // 30%
         buttonSizer->Add(numPanel, 7, wxEXPAND); // 70%
         buttonPanel->SetSizerAndFit(buttonSizer);
+
+        // Update leaderboard
+        this->UpdateLeaderboard(drawCanvas->get_grid());
     }
 
-Frame::~Frame() {}
-    
+Frame::~Frame() {
+    delete network;
+}
+
+void Frame::UpdateLeaderboard(double* grid) {
+    std::pair<int, double*> res = network->Run(grid);
+    this->leaderboard->UpdateLeaderboard(res.second);
+    delete[] res.second;
+}

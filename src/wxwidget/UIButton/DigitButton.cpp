@@ -27,6 +27,8 @@ DigitButton::~DigitButton() {}
 
 void DigitButton::OnClick(wxCommandEvent& event) {
     std::cout << "Clicked and submitted " << this->submitValue << std::endl;
+    // ONLY SUBMIT IF GRID NOT EMPTY! DO A CHECK HERE
+    
     // for (int i = 0; i < CONSTANTS_H::CANY; i++) {
     //     for (int j = 0; j < CONSTANTS_H::CANX; j++) {
     //         std::cout << grid[i * CONSTANTS_H::CANX + j] << " ";
