@@ -1,5 +1,7 @@
 #include "wxwidget/Canvas.h"
+#include "neural/Network/NeuralNetwork.h"
 #include "constants.h"
+#include <iostream>
 /*
 private:
     int lastX;
@@ -10,7 +12,7 @@ private:
 */
 
 // Public functions
-Canvas::Canvas(wxPanel* parent) : 
+Canvas::Canvas(wxPanel* parent, std::function<void(double*)> updateLeaderboardFunc) : 
     wxPanel(parent, wxID_ANY, 
     wxDefaultPosition, 
     wxSize(CONSTANTS_H::CANX * CONSTANTS_H::SCALE, CONSTANTS_H::CANY * CONSTANTS_H::SCALE)) 
@@ -32,6 +34,9 @@ Canvas::Canvas(wxPanel* parent) :
         }
         this->drawingHistory.push_front(copy);
 
+        // link updateleaderboard function 
+        this->updateLeaderboard = updateLeaderboardFunc;
+
         // Default Canvas background color
         this->SetBackgroundColour(wxColour(wxColor(*wxWHITE)));
 
@@ -40,7 +45,7 @@ Canvas::Canvas(wxPanel* parent) :
         Bind(wxEVT_LEFT_DOWN, &Canvas::OnMouseDown, this);
         Bind(wxEVT_LEFT_UP, &Canvas::OnMouseUp, this);
         Bind(wxEVT_MOTION, &Canvas::OnMouseMove, this);
-        Bind(wxEVT_PAINT, &Canvas::OnPaint, this);
+
     }
 Canvas::~Canvas() {
     delete[] grid;
@@ -61,6 +66,7 @@ void Canvas::OnMouseDown(wxMouseEvent& evt) {
     grid[y * CONSTANTS_H::CANX + x] = 1;
     Refresh();
 }
+
 bool Canvas::MouseRange(const int& y, const int& x) {
     bool validY = (y >= 0) && (y < CONSTANTS_H::CANY);
     bool validX = (x >= 0) && (x < CONSTANTS_H::CANX);
@@ -73,6 +79,7 @@ void Canvas::OnMouseUp(wxMouseEvent& evt) {
     lastX = -1;
     lastY = -1;
     StoreState();
+    this->updateLeaderboard(this->grid);
 }
 
 void Canvas::OnMouseMove(wxMouseEvent& evt) {
@@ -130,7 +137,6 @@ void Canvas::OnPaint(wxPaintEvent& evt) {
             }
         }
     }
-
 }   
 
 void Canvas::StoreState() {
@@ -153,6 +159,7 @@ void Canvas::ClearCanvas() {
     this->lastDrew = true;
     Refresh();
     StoreState();
+    this->updateLeaderboard(this->grid);
 }
 
 void Canvas::RollBack() {
@@ -170,6 +177,7 @@ void Canvas::RollBack() {
         }
         
         Refresh();
+        this->updateLeaderboard(this->grid);
     }
     
 }
