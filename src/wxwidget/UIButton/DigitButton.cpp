@@ -1,6 +1,8 @@
 #include "wxwidget/UIButton/DigitButton.h"
 #include "constants.h"
 #include "neural/Data_Handling/DataPoint.h"
+#include "neural/Data_Handling/DataSet.h"
+#include "neural/Data_Handling/CanvasConverter.h"
 /* 
 protected:
     int submitValue;
@@ -27,6 +29,9 @@ DigitButton::~DigitButton() {}
 
 void DigitButton::OnClick(wxCommandEvent& event) {
     std::cout << "Clicked and submitted " << this->submitValue << std::endl;
+    // double* grid;
+    // int submitValue;
+    
     // for (int i = 0; i < CONSTANTS_H::CANY; i++) {
     //     for (int j = 0; j < CONSTANTS_H::CANX; j++) {
     //         std::cout << grid[i * CONSTANTS_H::CANX + j] << " ";
@@ -34,6 +39,18 @@ void DigitButton::OnClick(wxCommandEvent& event) {
     //     std::cout << std::endl;
     // }
     
-    // DataPoint(double* inputs, int inputs_length, int label, int num_labels);
-    // DataPoint(grid, CONSTANTS_H::CANY * CONSTANTS_H::CANX, this->submitValue, 10);
+    // Convert current grid into a DataPoint and append to dataset file
+    if (DigitButton::grid != nullptr) {
+        try {
+            DataPoint* dp = CanvasConverter::GridToDataPoint(DigitButton::grid, CONSTANTS_H::CANX, CONSTANTS_H::CANY, this->submitValue, CONSTANTS_H::NUMDIGITS, 28);
+            // Append to file
+            DataSet::AppendDataPoint(dp, "user_drawings.bin");
+            std::cout << "Saved drawing as label " << this->submitValue << " to user_drawings.bin" << std::endl;
+            delete dp;
+        } catch (const std::exception& ex) {
+            std::cerr << "Failed to save drawing: " << ex.what() << std::endl;
+        }
+    } else {
+        std::cerr << "No grid available to save." << std::endl;
+    }
 }
