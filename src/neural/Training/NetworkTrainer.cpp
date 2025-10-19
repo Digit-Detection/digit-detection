@@ -16,6 +16,15 @@ NetworkTrainer::NetworkTrainer() {
     this->network_settings = new NetworkSettings();
     this->defaultConstructed = true;
 
+    this->all_data = nullptr;
+    this->all_data_length = 0;
+    this->training_data = nullptr;
+    this->training_data_length = 0;
+    this->validation_data = nullptr;
+    this->validation_data_length = 0;
+    this->training_batches = nullptr;
+    this->num_training_batches = 0;
+    
     this->current_learn_rate = this->network_settings->get_initial_learning_rate();
     this->data_loaded = false;
     this->epoch = 0;
@@ -26,6 +35,15 @@ NetworkTrainer::NetworkTrainer(NetworkSettings* settings) {
     this->training_split = 0.8;
     this->network_settings = settings;
     this->defaultConstructed = false;
+
+    this->all_data = nullptr;
+    this->all_data_length = 0;
+    this->training_data = nullptr;
+    this->training_data_length = 0;
+    this->validation_data = nullptr;
+    this->validation_data_length = 0;
+    this->training_batches = nullptr;
+    this->num_training_batches = 0;
 
     this->current_learn_rate = this->network_settings->get_initial_learning_rate();
     this->data_loaded = false;
@@ -140,7 +158,7 @@ void NetworkTrainer::LoadData() {
         }
     }
 
-    // If still no data, fall back to existing behavior (this->all_data must have been set by tests)
+    // If still no data, fall back to existing behaviour (this->all_data must have been set by tests)
     std::pair<std::pair<DataPoint**, int>, std::pair<DataPoint**, int>> result = DatasetHandling::SplitData(this->all_data, this->all_data_length, this->training_split);
     this->training_data = result.first.first;
     this->training_data_length = result.first.second;
