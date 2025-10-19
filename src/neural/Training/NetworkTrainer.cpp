@@ -8,6 +8,8 @@
 #include "neural/Data_Handling/MnistLoader.h"
 #include "neural/Data_Handling/DataSet.h"
 #include <fstream>
+#include <vector>
+#include <string>
 
 
 NetworkTrainer::NetworkTrainer() {
@@ -94,27 +96,54 @@ void NetworkTrainer::StartTrainingSession(int num_epochs) {
 void NetworkTrainer::LoadData() {
     // If no data was previously injected, try loading mnist.bin (convert from IDX if needed)
     if (this->all_data == nullptr || this->all_data_length == 0) {
-        const std::string mnist_bin = "data/mnist.bin";
-        // If mnist.bin doesn't exist, attempt to convert from IDX files in data/
-        std::ifstream f(mnist_bin, std::ios::binary);
-        if (!f) {
-            const std::string img = "data/train-images.idx3-ubyte";
-            const std::string lab = "data/train-labels.idx1-ubyte";
-            std::cout << "mnist.bin not found, converting MNIST IDX files to " << mnist_bin << "..." << std::endl;
-            bool ok = MnistLoader::ConvertToBin(img, lab, mnist_bin, 10);
-            if (!ok) std::cerr << "Warning: failed to convert MNIST to bin; proceeding without MNIST." << std::endl;
-        } else {
-            f.close();
+        // Try multiple candidate paths to support running from build/ or repo root
+        auto find_first = [](const std::vector<std::string>& cands) -> std::string {
+            for (const auto &p : cands) {
+                std::ifstream f(p, std::ios::binary);
+                if (f) { f.close(); return p; }
+            }
+            return std::string();
+        };
+
+        const std::vector<std::string> mnist_bin_cands = {"data/mnist.bin", "../data/mnist.bin", "../../data/mnist.bin"};
+        std::string mnist_bin_found = find_first(mnist_bin_cands);
+        if (mnist_bin_found.empty()) {
+            // Try to convert from IDX files in likely locations
+            const std::vector<std::string> img_cands = {"data/train-images.idx3-ubyte", "../data/train-images.idx3-ubyte", "../../data/train-images.idx3-ubyte"};
+            const std::vector<std::string> lab_cands = {"data/train-labels.idx1-ubyte", "../data/train-labels.idx1-ubyte", "../../data/train-labels.idx1-ubyte"};
+            std::string img_found = find_first(img_cands);
+            std::string lab_found = find_first(lab_cands);
+            // Compute a sensible target path next to the found IDX files so we can write there
+            std::string target_bin;
+            if (!img_found.empty()) {
+                auto pos = img_found.find_last_of("/\\");
+                if (pos != std::string::npos) target_bin = img_found.substr(0, pos) + "/mnist.bin";
+                else target_bin = std::string("mnist.bin");
+            } else {
+                target_bin = mnist_bin_cands[0];
+            }
+            std::cout << "mnist.bin not found, attempting to convert MNIST IDX files to " << target_bin << "..." << std::endl;
+            if (!img_found.empty() && !lab_found.empty()) {
+                bool ok = MnistLoader::ConvertToBin(img_found, lab_found, target_bin, 10);
+                if (!ok) std::cerr << "Warning: failed to convert MNIST to bin; proceeding without MNIST." << std::endl;
+                else mnist_bin_found = target_bin;
+            } else {
+                std::cerr << "Failed to find MNIST IDX files in expected locations." << std::endl;
+            }
         }
 
         // Load mnist.bin if available
         DataPoint** mnist_arr = nullptr;
         int mnist_n = 0;
-        std::pair<DataPoint**, int> loaded_mnist = DataSet::LoadDataPoints(mnist_bin);
-        if (loaded_mnist.second > 0 && loaded_mnist.first != nullptr) {
-            mnist_arr = loaded_mnist.first;
-            mnist_n = loaded_mnist.second;
-            std::cout << "Loaded " << mnist_n << " samples from " << mnist_bin << "\n";
+        if (!mnist_bin_found.empty()) {
+            std::pair<DataPoint**, int> loaded_mnist = DataSet::LoadDataPoints(mnist_bin_found);
+            if (loaded_mnist.second > 0 && loaded_mnist.first != nullptr) {
+                mnist_arr = loaded_mnist.first;
+                mnist_n = loaded_mnist.second;
+                std::cout << "Loaded " << mnist_n << " samples from " << mnist_bin_found << "\n";
+            } else {
+                std::cerr << "Could not open dataset file: " << mnist_bin_found << std::endl;
+            }
         }
 
         // Load user drawings: prefer data/user_drawings.bin, fall back to user_drawings.bin
@@ -159,6 +188,11 @@ void NetworkTrainer::LoadData() {
     }
 
     // If still no data, fall back to existing behaviour (this->all_data must have been set by tests)
+    if (this->all_data == nullptr || this->all_data_length == 0) {
+        std::cerr << "Error: no training data available (mnist or user drawings). Aborting training." << std::endl;
+        std::exit(1);
+    }
+
     std::pair<std::pair<DataPoint**, int>, std::pair<DataPoint**, int>> result = DatasetHandling::SplitData(this->all_data, this->all_data_length, this->training_split);
     this->training_data = result.first.first;
     this->training_data_length = result.first.second;
