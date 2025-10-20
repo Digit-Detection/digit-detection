@@ -3,13 +3,15 @@
 #include "neural/Data_Handling/DataPoint.h"
 #include "neural/Data_Handling/DataSet.h"
 #include "neural/Data_Handling/CanvasConverter.h"
+
 /* 
+public:
+    static Canvas* canvasParent;
 protected:
     int submitValue;
-    double* grid;
     void OnClick(wxCommandEvent& event);
 */
-double* DigitButton::grid = nullptr;
+Canvas* DigitButton::canvasParent = nullptr;
 
 DigitButton::DigitButton(wxWindow* parent, std::string digit)
     : wxButton(parent, wxID_ANY, digit)
@@ -29,28 +31,32 @@ DigitButton::~DigitButton() {}
 
 void DigitButton::OnClick(wxCommandEvent& event) {
     std::cout << "Clicked and submitted " << this->submitValue << std::endl;
-    // double* grid;
-    // int submitValue;
+    if (!DigitButton::canvasParent) {
+        std::cout << "This panel is not linked to a canvas!" << std::endl;
+        return;
+    }
+    // Deep copy to history
     
-    // for (int i = 0; i < CONSTANTS_H::CANY; i++) {
-    //     for (int j = 0; j < CONSTANTS_H::CANX; j++) {
-    //         std::cout << grid[i * CONSTANTS_H::CANX + j] << " ";
-    //     }
-    //     std::cout << std::endl;
-    // }
-    
-    // Convert current grid into a DataPoint and append to dataset file
-    if (DigitButton::grid != nullptr) {
-        try {
-            DataPoint* dp = CanvasConverter::GridToDataPoint(DigitButton::grid, CONSTANTS_H::CANX, CONSTANTS_H::CANY, this->submitValue, CONSTANTS_H::NUMDIGITS, 28);
-            // Append to file
-            DataSet::AppendDataPoint(dp, "user_drawings.bin");
-            std::cout << "Saved drawing as label " << this->submitValue << " to user_drawings.bin" << std::endl;
-            delete dp;
-        } catch (const std::exception& ex) {
-            std::cerr << "Failed to save drawing: " << ex.what() << std::endl;
+    // prevent submission of empty grid
+    if (!DigitButton::canvasParent->is_empty()) {
+        // Convert current grid into a DataPoint and append to dataset file
+        if (DigitButton::canvasParent->get_grid()) {
+            try {
+                DataPoint* dp = CanvasConverter::GridToDataPoint(DigitButton::canvasParent->get_grid(), CONSTANTS_H::CANX, CONSTANTS_H::CANY, this->submitValue, CONSTANTS_H::NUMDIGITS, 28);
+                // Append to file
+                DataSet::AppendDataPoint(dp, "user_drawings.bin");
+                std::cout << "Saved drawing as label " << this->submitValue << " to user_drawings.bin" << std::endl;
+                delete dp;
+            } catch (const std::exception& ex) {
+                std::cerr << "Failed to save drawing: " << ex.what() << std::endl;
+            }
+        } else {
+            std::cerr << "No grid available to save." << std::endl;
         }
+        
+        // Remove submission on clear()
+        DigitButton::canvasParent->ClearCanvas();
     } else {
-        std::cerr << "No grid available to save." << std::endl;
+        std::cout << "Nothing to submit!" << std::endl;
     }
 }

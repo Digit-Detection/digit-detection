@@ -1,3 +1,4 @@
+#pragma once
 #include <wx/wx.h>
 #include <vector>
 #include <wx/geometry.h>
@@ -9,15 +10,20 @@ class Canvas : public wxPanel{
         // Parent window, 
         Canvas(wxPanel* parent, std::function<void(double*)> updateLeaderboardFunc);
         ~Canvas();
-
+        // Helper
+        bool is_empty();
         // Bindable
         void ClearCanvas();
         void RollBack();
         // encapsulation
         double* get_grid();
         bool get_drawing_state();
+        int get_brushSize();
+        void set_brushSize(int newSize);
+        bool get_lastDrew();
         
     private:
+        int brushSize;
         int lastX;
         int lastY; // Last mouse pos
         double* grid; // 2D array represented in 1D
@@ -31,7 +37,6 @@ class Canvas : public wxPanel{
         void OnMouseUp(wxMouseEvent& evt);
         void OnMouseMove(wxMouseEvent& evt);
         void OnPaint(wxPaintEvent& evt);      
-        void StoreState(); // Store canvas state for rollback
-        
-
+        void StoreState(); // Store canvas state for rollback       
+        void DrawGrid(const int& y, const int& x);
 };

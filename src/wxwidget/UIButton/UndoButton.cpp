@@ -1,14 +1,21 @@
 #include "wxwidget/UIButton/UndoButton.h"
+#include <wx/colour.h>
 #include <iostream>
+
 UndoButton::UndoButton(wxWindow* parent, std::function<void()> onClick)
-    : wxButton(parent, wxID_ANY, "UNDO"), undoFunction(onClick)
+    : FunctionButton(parent, "UNDO")
 {
-    Bind(wxEVT_BUTTON, &UndoButton::OnClick, this);
+    this->FunctionLink(onClick);
+    ApplyStyle();
 }
 
 UndoButton::~UndoButton() {}
 
 void UndoButton::OnClick(wxCommandEvent& event) {
-    std::cout << "Undone" << std::endl;
-    if (undoFunction) undoFunction();
+    FunctionButton::OnClick(event);
+}
+
+void UndoButton::ApplyStyle() {
+    SetBackgroundColour(wxColour(200, 200, 255)); // Light blue
+    SetForegroundColour(*wxBLACK);
 }

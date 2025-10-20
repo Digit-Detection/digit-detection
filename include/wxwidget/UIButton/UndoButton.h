@@ -1,15 +1,12 @@
 #pragma once
-#include <functional>
-#include "BasicButton.h"
+#include "wxwidget/UIButton/FunctionButton.h"
 
-class UndoButton : public wxButton {
+class UndoButton : public FunctionButton {
 public:
-    UndoButton(wxWindow* parent, std::function<void()> onClick);
+    UndoButton(wxWindow* parent, std::function<void()> onClick = nullptr);
     ~UndoButton();
 
-private:
-    std::function<void()> undoFunction;
-    void OnClick(wxCommandEvent& event);
-
-
+protected:
+    void OnClick(wxCommandEvent& event) override;
+    void ApplyStyle();
 };

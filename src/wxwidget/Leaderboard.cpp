@@ -5,12 +5,11 @@
 Leaderboard::Leaderboard(wxWindow* parent)
     : wxScrolledWindow(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL)
     {   
+        this->SetMinSize(wxSize(CONSTANTS_H::TOOLSIZE, CONSTANTS_H::CANY * CONSTANTS_H::SCALE));    
         // ================ Scrollable window modification ================
         this->SetScrollRate(10, 10);
         this->sizer = new wxBoxSizer(wxVERTICAL);
         this->SetSizer(sizer);
-        FitInside();
-        Layout();
 
     }
 Leaderboard::~Leaderboard() {}
@@ -24,9 +23,10 @@ std::string Leaderboard::textPrettify(int num, double prob) {
 }
 
 void Leaderboard::UpdateLeaderboard(double* probability) {
-    std::cout << "Updating Leaderboard" << std::endl;
+    // std::cout << "Updating Leaderboard" << std::endl;
     // Clear previous content
     this->sizer->Clear(true); // true = delete windows
+    
     // =========== Sort Leaderboard =============
     std::vector<std::pair<int, double>> payload(CONSTANTS_H::NUMDIGITS); // {<value, probability>}
     for (int i = 0; i < CONSTANTS_H::NUMDIGITS; i++) {
@@ -36,13 +36,14 @@ void Leaderboard::UpdateLeaderboard(double* probability) {
         if (this->truncate_double(a.second, 6) == this->truncate_double(b.second, 6)) return a.first < b.first; // decreasing by value
         return a.second > b.second; // decreasing by probability
     });
+    
     // ================ Insert Content ====================
     for (int i = 0; i < CONSTANTS_H::NUMDIGITS; i++) {
         wxStaticText* label = new wxStaticText(this, wxID_ANY, textPrettify(payload[i].first, payload[i].second));
         this->sizer->Add(label, 0, wxALL, 5);
     }
-
+    
     // Refresh layout
-    Layout();
     FitInside();
+    Layout();
 }

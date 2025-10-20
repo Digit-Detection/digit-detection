@@ -1,12 +1,13 @@
 #pragma once
-#include "BasicButton.h"
+#include "wxwidget/UIButton/FunctionButton.h"
+#include "wxwidget/Canvas.h"
 #include <string>
 
 class DigitButton : public wxButton {
 public:
     DigitButton(wxWindow* parent, std::string title);
     ~DigitButton();
-    static double* grid;
+    static Canvas* canvasParent;
 
 private:
     int submitValue;
