@@ -6,3 +6,6 @@ build/
 # Ignore editor files
 .vscode/
 *.swp
+
+# Ignore large files
+mnist.bin
