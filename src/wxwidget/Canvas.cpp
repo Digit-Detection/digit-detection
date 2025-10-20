@@ -15,9 +15,13 @@ private:
 Canvas::Canvas(wxPanel* parent, std::function<void(double*)> updateLeaderboardFunc) : 
     wxPanel(parent, wxID_ANY, 
     wxDefaultPosition, 
-    wxSize(CONSTANTS_H::CANX * CONSTANTS_H::SCALE, CONSTANTS_H::CANY * CONSTANTS_H::SCALE)) 
+    wxDefaultSize) 
     {   
+        // Set minimum size instead
+        this->SetMinSize(wxSize(CONSTANTS_H::CANX * CONSTANTS_H::SCALE, CONSTANTS_H::CANY * CONSTANTS_H::SCALE));
+        
         // Initialize Variables
+        this->brushSize = 1;
         this->lastX = -1;
         this->lastY = -1;
         this->drawing = false; 
@@ -26,26 +30,21 @@ Canvas::Canvas(wxPanel* parent, std::function<void(double*)> updateLeaderboardFu
             grid[i] = 0.0;
         }
         this->lastDrew = false;
-
         // Create first history instance
         double* copy = new double[CONSTANTS_H::CANY * CONSTANTS_H::CANX];
         for (int i = 0; i < CONSTANTS_H::CANY * CONSTANTS_H::CANX; i++) {
             copy[i] = grid[i];
         }
         this->drawingHistory.push_front(copy);
-
         // link updateleaderboard function 
         this->updateLeaderboard = updateLeaderboardFunc;
-
         // Default Canvas background color
         this->SetBackgroundColour(wxColour(wxColor(*wxWHITE)));
-
         // Bind events to corresponding function
         Bind(wxEVT_PAINT, &Canvas::OnPaint, this);
         Bind(wxEVT_LEFT_DOWN, &Canvas::OnMouseDown, this);
         Bind(wxEVT_LEFT_UP, &Canvas::OnMouseUp, this);
         Bind(wxEVT_MOTION, &Canvas::OnMouseMove, this);
-
     }
 Canvas::~Canvas() {
     delete[] grid;
@@ -63,7 +62,7 @@ void Canvas::OnMouseDown(wxMouseEvent& evt) {
     int x = evt.GetX() / CONSTANTS_H::SCALE;
     int y = evt.GetY() / CONSTANTS_H::SCALE;
     if (grid[y * CONSTANTS_H::CANX + x] == 0) this->lastDrew = true;
-    grid[y * CONSTANTS_H::CANX + x] = 1;
+    this->DrawGrid(y, x);
     Refresh();
 }
 
@@ -98,7 +97,7 @@ void Canvas::OnMouseMove(wxMouseEvent& evt) {
             while (true) {
                 if (MouseRange(cy, cx)) {
                     if (grid[cy * CONSTANTS_H::CANX + cx] == 0) this->lastDrew = true;
-                    grid[cy * CONSTANTS_H::CANX + cx] = 1;
+                    this->DrawGrid(cy, cx);
                 }
 
                 if (cx == x && cy == y) break;
@@ -111,7 +110,7 @@ void Canvas::OnMouseMove(wxMouseEvent& evt) {
         } else {
             if (MouseRange(y, x)) {
                 if (grid[y * CONSTANTS_H::CANX + x] == 0) this->lastDrew = true;
-                grid[y * CONSTANTS_H::CANX + x] = 1;
+                this->DrawGrid(y, x);
             }
 
         }
@@ -182,10 +181,42 @@ void Canvas::RollBack() {
     
 }
 
+void Canvas::DrawGrid(const int& y, const int& x) {
+    for (int dy = -brushSize / 2; dy <= brushSize / 2; ++dy) {
+        for (int dx = -brushSize / 2; dx <= brushSize / 2; ++dx) {
+            int px = x + dx;
+            int py = y + dy;
+            if (MouseRange(py, px)) {
+                if (grid[py * CONSTANTS_H::CANX + px] == 0) this->lastDrew = true;
+                grid[py * CONSTANTS_H::CANX + px] = 1;
+            }
+        }
+    }
+}
+
+bool Canvas::is_empty() {
+    for (int i = 0; i < CONSTANTS_H::CANY * CONSTANTS_H::CANX; i++) {
+        if (grid[i]) return false;
+    }
+    return true;
+}
 // encapsulation
 double* Canvas::get_grid() {
     return this->grid;
 }
 bool Canvas::get_drawing_state() {
     return this->drawing;
+}
+
+int Canvas::get_brushSize() {
+    return this->brushSize;
+}
+
+void Canvas::set_brushSize(int newSize) {
+    if (newSize <= 0) return;
+    this->brushSize = newSize;
+}
+
+bool Canvas::get_lastDrew() {
+    return this->lastDrew;
 }

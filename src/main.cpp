@@ -43,7 +43,7 @@ bool MainApp::OnInit() {
     std::cout << "CP1" << std::endl;
     network_trainer.LoadData();
     std::cout << "CP2" << std::endl;
-    network_trainer.StartTrainingSession(20);
+    network_trainer.StartTrainingSession(0); // AMOUNT TRAINED
 
     delete[] layer_sizes;
     delete settings;
@@ -54,7 +54,6 @@ bool MainApp::OnInit() {
     Frame* mainFrame = new Frame("Digit Detector");
     // Window Size;
     std::cout << "completed 1" << std::endl;
-    mainFrame->SetClientSize(canXSize, canYSize);
     // Center the window
     mainFrame->Center();
     std::cout << "completed 2" << std::endl;

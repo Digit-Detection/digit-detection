@@ -1,14 +1,21 @@
 #include "wxwidget/UIButton/ClearButton.h"
+#include <wx/colour.h>
+#include <iostream>
 
 ClearButton::ClearButton(wxWindow* parent, std::function<void()> onClick)
-    : wxButton(parent, wxID_ANY, "CLEAR"), clearFunction(onClick)
+    : FunctionButton(parent, "CLEAR")
 {
-    Bind(wxEVT_BUTTON, &ClearButton::OnClick, this);
+    this->FunctionLink(onClick);
+    ApplyStyle();
 }
 
 ClearButton::~ClearButton() {}
 
 void ClearButton::OnClick(wxCommandEvent& event) {
-    // std::cout << "Cleared" << std::endl;
-    if (clearFunction) clearFunction();
+    FunctionButton::OnClick(event); // Call base behavior
+}
+
+void ClearButton::ApplyStyle() {
+    SetBackgroundColour(wxColour(255, 200, 200)); // Light red
+    SetForegroundColour(*wxBLACK);
 }
