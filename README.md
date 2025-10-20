@@ -29,7 +29,7 @@ sudo apt install libgtk-3-dev # CMake pkg for GUIs
 ```
 
 ## wxWidgets NOT installed locally
-1. Choose an installation option below
+1. Clone the project and all submodules
 
 ```bash
 git clone --recursive https://github.com/wxWidgets/wxWidgets.git lib/wxWidgets
