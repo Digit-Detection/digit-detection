@@ -10,7 +10,7 @@ class NetworkData {
         std::string filename;
 
     public:
-        explicit NetworkData(const std::string& file = "network_data.bin");
+    explicit NetworkData(const std::string& file = "data/network_data.bin");
 
         double get_accuracy() const;
         NeuralNetwork* LoadNetworkFromSaved();

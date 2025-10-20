@@ -6,7 +6,7 @@
 #include "neural/Data_Handling/DataPoint.h"
 
 int main(int argc, char** argv) {
-    std::string path = "user_drawings.bin";
+    std::string path = "data/user_drawings.bin";
     if (argc > 1) path = argv[1];
 
     auto res = DataSet::LoadDataPoints(path);

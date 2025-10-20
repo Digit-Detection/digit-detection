@@ -43,9 +43,9 @@ void DigitButton::OnClick(wxCommandEvent& event) {
         if (DigitButton::canvasParent->get_grid()) {
             try {
                 DataPoint* dp = CanvasConverter::GridToDataPoint(DigitButton::canvasParent->get_grid(), CONSTANTS_H::CANX, CONSTANTS_H::CANY, this->submitValue, CONSTANTS_H::NUMDIGITS, 28);
-                // Append to file
-                DataSet::AppendDataPoint(dp, "user_drawings.bin");
-                std::cout << "Saved drawing as label " << this->submitValue << " to user_drawings.bin" << std::endl;
+                // Append to file inside data/ directory
+                DataSet::AppendDataPoint(dp, "data/user_drawings.bin");
+                std::cout << "Saved drawing as label " << this->submitValue << " to data/user_drawings.bin" << std::endl;
                 delete dp;
             } catch (const std::exception& ex) {
                 std::cerr << "Failed to save drawing: " << ex.what() << std::endl;

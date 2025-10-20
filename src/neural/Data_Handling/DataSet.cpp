@@ -2,8 +2,14 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <filesystem>
 
 void DataSet::SaveDataPoints(DataPoint** data, int data_length, const std::string& filename) {
+    // Ensure parent directory exists
+    try {
+        std::filesystem::path p(filename);
+        if (p.has_parent_path()) std::filesystem::create_directories(p.parent_path());
+    } catch (...) {}
     std::ofstream file(filename, std::ios::binary | std::ios::trunc);
     if (!file) throw std::runtime_error("Failed to open dataset file for writing");
     for (int i = 0; i < data_length; ++i) {
@@ -21,6 +27,10 @@ void DataSet::SaveDataPoints(DataPoint** data, int data_length, const std::strin
 }
 
 void DataSet::AppendDataPoint(DataPoint* dp, const std::string& filename) {
+    try {
+        std::filesystem::path p(filename);
+        if (p.has_parent_path()) std::filesystem::create_directories(p.parent_path());
+    } catch (...) {}
     std::ofstream file(filename, std::ios::binary | std::ios::out | std::ios::app);
     if (!file) throw std::runtime_error("Failed to open dataset file for appending");
     int inputs_len = dp->get_inputs_length();
