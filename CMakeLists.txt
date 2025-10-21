@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 project(Digit_Detection)
 set(CMAKE_CXX_STANDARD 17)
 
-option(USE_SYSTEM_WXWIDGETS "Use system-installed wxWidgets" ON)
+option(USE_SYSTEM_WXWIDGETS "Use system-installed wxWidgets" OFF)
 option(WARNINGS "Compile with -Wall and -Wextra" OFF)
 
 # Collect all .cpp source files recursively from src/ directory.
