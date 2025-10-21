@@ -96,45 +96,124 @@ std::vector<DataPoint*> GenerateAugmentedDataPoints(const double* src, int src_w
     double* buf_rot = new double[n];
     double* buf_noisy = new double[n];
 
-    // scaling options: none (factor=1), scaleDown, scaleUp
-    const double factors[3] = {1.0, CONSTANTS_H::SCALEDOWN, CONSTANTS_H::SCALEUP};
-    // rotation options: 0, left (-angle), right (+angle) (use degrees clockwise for Rotate)
-    const double rotations[3] = {0.0, -CONSTANTS_H::ROTATEANGLE, CONSTANTS_H::ROTATEANGLE};
-    // noise options: false/true
 
-    for (int si = 0; si < 3; ++si) {
-        double factor = factors[si];
-        // produce scaled buffer
-        if (factor == 1.0) {
-            for (int i = 0; i < n; ++i) buf_scaled[i] = src[i];
-        } else {
-            Scale(src, w, h, buf_scaled, w, h, factor);
+    // 1. No augmentation (original)
+    {
+        double* inputs = new double[n];
+        for (int i = 0; i < n; ++i) inputs[i] = src[i];
+        DataPoint* dp = new DataPoint(inputs, n, label, num_labels);
+        delete[] inputs;
+        out.push_back(dp);
+    }
+
+    // 2. Single augmentations
+    // Scaling only
+    for (int si = 0; si < NUM_SCALE_FACTORS; ++si) {
+        Scale(src, w, h, buf_scaled, w, h, SCALE_FACTORS[si]);
+        double* inputs = new double[n];
+        for (int i = 0; i < n; ++i) inputs[i] = buf_scaled[i];
+        DataPoint* dp = new DataPoint(inputs, n, label, num_labels);
+        delete[] inputs;
+        out.push_back(dp);
+    }
+    // Rotation only (left/right for each angle)
+    for (int ri = 0; ri < NUM_ROTATE_ANGLES; ++ri) {
+        // left (negative)
+        Rotate(src, w, h, buf_rot, w, h, -ROTATE_ANGLES[ri]);
+        double* inputsL = new double[n];
+        for (int i = 0; i < n; ++i) inputsL[i] = buf_rot[i];
+        out.push_back(new DataPoint(inputsL, n, label, num_labels));
+        delete[] inputsL;
+        // right (positive)
+        Rotate(src, w, h, buf_rot, w, h, ROTATE_ANGLES[ri]);
+        double* inputsR = new double[n];
+        for (int i = 0; i < n; ++i) inputsR[i] = buf_rot[i];
+        out.push_back(new DataPoint(inputsR, n, label, num_labels));
+        delete[] inputsR;
+    }
+    // Noise only
+    for (int ni = 0; ni < NUM_NOISE_LEVELS; ++ni) {
+        ApplySaltAndPepper(src, w, h, buf_noisy, w, h, NOISE_LEVELS[ni]);
+        double* inputs = new double[n];
+        for (int i = 0; i < n; ++i) inputs[i] = buf_noisy[i];
+        DataPoint* dp = new DataPoint(inputs, n, label, num_labels);
+        delete[] inputs;
+        out.push_back(dp);
+    }
+
+    // 3. Two augmentations
+    // Scaling + Rotation
+    for (int si = 0; si < NUM_SCALE_FACTORS; ++si) {
+        Scale(src, w, h, buf_scaled, w, h, SCALE_FACTORS[si]);
+        for (int ri = 0; ri < NUM_ROTATE_ANGLES; ++ri) {
+            // left
+            Rotate(buf_scaled, w, h, buf_rot, w, h, -ROTATE_ANGLES[ri]);
+            double* inputsL = new double[n];
+            for (int i = 0; i < n; ++i) inputsL[i] = buf_rot[i];
+            out.push_back(new DataPoint(inputsL, n, label, num_labels));
+            delete[] inputsL;
+            // right
+            Rotate(buf_scaled, w, h, buf_rot, w, h, ROTATE_ANGLES[ri]);
+            double* inputsR = new double[n];
+            for (int i = 0; i < n; ++i) inputsR[i] = buf_rot[i];
+            out.push_back(new DataPoint(inputsR, n, label, num_labels));
+            delete[] inputsR;
         }
+    }
+    // Scaling + Noise
+    for (int si = 0; si < NUM_SCALE_FACTORS; ++si) {
+        Scale(src, w, h, buf_scaled, w, h, SCALE_FACTORS[si]);
+        for (int ni = 0; ni < NUM_NOISE_LEVELS; ++ni) {
+            ApplySaltAndPepper(buf_scaled, w, h, buf_noisy, w, h, NOISE_LEVELS[ni]);
+            double* inputs = new double[n];
+            for (int i = 0; i < n; ++i) inputs[i] = buf_noisy[i];
+            out.push_back(new DataPoint(inputs, n, label, num_labels));
+            delete[] inputs;
+        }
+    }
+    // Rotation + Noise
+    for (int ri = 0; ri < NUM_ROTATE_ANGLES; ++ri) {
+        // left
+        Rotate(src, w, h, buf_rot, w, h, -ROTATE_ANGLES[ri]);
+        for (int ni = 0; ni < NUM_NOISE_LEVELS; ++ni) {
+            ApplySaltAndPepper(buf_rot, w, h, buf_noisy, w, h, NOISE_LEVELS[ni]);
+            double* inputs = new double[n];
+            for (int i = 0; i < n; ++i) inputs[i] = buf_noisy[i];
+            out.push_back(new DataPoint(inputs, n, label, num_labels));
+            delete[] inputs;
+        }
+        // right
+        Rotate(src, w, h, buf_rot, w, h, ROTATE_ANGLES[ri]);
+        for (int ni = 0; ni < NUM_NOISE_LEVELS; ++ni) {
+            ApplySaltAndPepper(buf_rot, w, h, buf_noisy, w, h, NOISE_LEVELS[ni]);
+            double* inputs = new double[n];
+            for (int i = 0; i < n; ++i) inputs[i] = buf_noisy[i];
+            out.push_back(new DataPoint(inputs, n, label, num_labels));
+            delete[] inputs;
+        }
+    }
 
-        for (int ri = 0; ri < 3; ++ri) {
-            double rot = rotations[ri];
-            // produce rotated buffer
-            if (rot == 0.0) {
-                for (int i = 0; i < n; ++i) buf_rot[i] = buf_scaled[i];
-            } else {
-                Rotate(buf_scaled, w, h, buf_rot, w, h, rot);
-            }
-
-            for (int noiseOn = 0; noiseOn <= 1; ++noiseOn) {
-                if (noiseOn == 0) {
-                    // no noise
-                    for (int i = 0; i < n; ++i) buf_noisy[i] = buf_rot[i];
-                } else {
-                    ApplySaltAndPepper(buf_rot, w, h, buf_noisy, w, h, CONSTANTS_H::NOISE_PERCENT);
-                }
-
-                // create DataPoint from buf_noisy
+    // 4. All three augmentations
+    for (int si = 0; si < NUM_SCALE_FACTORS; ++si) {
+        Scale(src, w, h, buf_scaled, w, h, SCALE_FACTORS[si]);
+        for (int ri = 0; ri < NUM_ROTATE_ANGLES; ++ri) {
+            // left
+            Rotate(buf_scaled, w, h, buf_rot, w, h, -ROTATE_ANGLES[ri]);
+            for (int ni = 0; ni < NUM_NOISE_LEVELS; ++ni) {
+                ApplySaltAndPepper(buf_rot, w, h, buf_noisy, w, h, NOISE_LEVELS[ni]);
                 double* inputs = new double[n];
                 for (int i = 0; i < n; ++i) inputs[i] = buf_noisy[i];
-                DataPoint* dp = new DataPoint(inputs, n, label, num_labels);
-                // DataPoint ctor copies inputs, so safe to delete
+                out.push_back(new DataPoint(inputs, n, label, num_labels));
                 delete[] inputs;
-                out.push_back(dp);
+            }
+            // right
+            Rotate(buf_scaled, w, h, buf_rot, w, h, ROTATE_ANGLES[ri]);
+            for (int ni = 0; ni < NUM_NOISE_LEVELS; ++ni) {
+                ApplySaltAndPepper(buf_rot, w, h, buf_noisy, w, h, NOISE_LEVELS[ni]);
+                double* inputs = new double[n];
+                for (int i = 0; i < n; ++i) inputs[i] = buf_noisy[i];
+                out.push_back(new DataPoint(inputs, n, label, num_labels));
+                delete[] inputs;
             }
         }
     }

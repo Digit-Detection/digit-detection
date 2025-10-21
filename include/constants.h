@@ -27,16 +27,15 @@ const int NUMDIGITS = 10; // Record digits from 0 to 9 (10 digit total)
 const int DESTX = 28; // Destination X size in pixels (MNIST is 28)
 const int DESTY = 28; // Destination Y size in pixels (MNIST is 28)
 
-// AUGMENTATION CONSTANTS
-// Scaling factors: scale down (e.g., 0.85) and scale up (e.g., 1.15)
-const double SCALEDOWN = 0.85;
-const double SCALEUP = 1.15;
 
-// Rotation (degrees). Make sure this isn't too large
-// (< 30 deg is great). Or else 6 and 9 is mixed up.
-const double ROTATEANGLE = 15.0;
+// AUGMENTATION CONSTANTS (arrays of values)
+static const double SCALE_FACTORS[] = {0.85, 0.9, 0.95, 1.05, 1.1, 1.15};
+static const int NUM_SCALE_FACTORS = 6;
 
-// Salt-and-pepper noise percentage (0.005 == 0.5%)
-const double NOISE_PERCENT = 0.005;
+static const double ROTATE_ANGLES[] = {5.0, 10.0, 15.0};
+static const int NUM_ROTATE_ANGLES = 3;
+
+static const double NOISE_LEVELS[] = {0.005, 0.006, 0.007, 0.008, 0.009, 0.01};
+static const int NUM_NOISE_LEVELS = 6;
 
 #endif
