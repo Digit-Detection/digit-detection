@@ -21,11 +21,11 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
     // =========== Develop Containers ===========
     wxPanel* canvasPanel = new wxPanel(this, wxID_ANY);
     canvasPanel->SetBackgroundColour(wxColor(100, 100, 200));
-    canvasPanel->SetMinSize(wxSize(CONSTANTS_H::CANX * CONSTANTS_H::SCALE, CONSTANTS_H::CANY * CONSTANTS_H::SCALE));
+    canvasPanel->SetMinSize(wxSize(CONSTANTS_H::CANX * CONSTANTS_H::CANSCALE, CONSTANTS_H::CANY * CONSTANTS_H::CANSCALE));
     
     wxPanel* toolPanel = new wxPanel(this, wxID_ANY);
     toolPanel->SetBackgroundColour(wxColor(100, 200, 100));
-    toolPanel->SetMinSize(wxSize(CONSTANTS_H::TOOLSIZE, CONSTANTS_H::CANY * CONSTANTS_H::SCALE));
+    toolPanel->SetMinSize(wxSize(CONSTANTS_H::TOOLSIZE, CONSTANTS_H::CANY * CONSTANTS_H::CANSCALE));
     
     // =========== Develop Canvas ===========
     Canvas* drawCanvas = new Canvas(canvasPanel, [this](double* grid) {
@@ -95,8 +95,8 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
     this->SetSizer(mainSizer);
     
     // Set explicit client size to prevent compression
-    int totalWidth = CONSTANTS_H::CANX * CONSTANTS_H::SCALE + CONSTANTS_H::TOOLSIZE;
-    int totalHeight = CONSTANTS_H::CANY * CONSTANTS_H::SCALE;
+    int totalWidth = CONSTANTS_H::CANX * CONSTANTS_H::CANSCALE + CONSTANTS_H::TOOLSIZE;
+    int totalHeight = CONSTANTS_H::CANY * CONSTANTS_H::CANSCALE;
     this->SetClientSize(totalWidth, totalHeight);
     
     this->Layout();

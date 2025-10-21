@@ -1,5 +1,6 @@
 #include "wxwidget/Canvas.h"
 #include "neural/Network/NeuralNetwork.h"
+#include "neural/Data_Handling/CanvasConverter.h"
 #include "constants.h"
 #include <iostream>
 /*
@@ -18,7 +19,7 @@ Canvas::Canvas(wxPanel* parent, std::function<void(double*)> updateLeaderboardFu
     wxDefaultSize) 
     {   
         // Set minimum size instead
-        this->SetMinSize(wxSize(CONSTANTS_H::CANX * CONSTANTS_H::SCALE, CONSTANTS_H::CANY * CONSTANTS_H::SCALE));
+        this->SetMinSize(wxSize(CONSTANTS_H::CANX * CONSTANTS_H::CANSCALE, CONSTANTS_H::CANY * CONSTANTS_H::CANSCALE));
         
         // Initialize Variables
         this->brushSize = 1;
@@ -29,6 +30,10 @@ Canvas::Canvas(wxPanel* parent, std::function<void(double*)> updateLeaderboardFu
         for (int i = 0; i < CONSTANTS_H::CANY * CONSTANTS_H::CANX; i++) {
             grid[i] = 0.0;
         }
+        // Allocate resampled buffer used for continuous updates (DESTX x DESTY)
+        this->resampledGrid = new double[CONSTANTS_H::DESTX * CONSTANTS_H::DESTY];
+        // initialize resampled buffer
+        for (int i = 0; i < CONSTANTS_H::DESTX * CONSTANTS_H::DESTY; ++i) this->resampledGrid[i] = 0.0;
         this->lastDrew = false;
         // Create first history instance
         double* copy = new double[CONSTANTS_H::CANY * CONSTANTS_H::CANX];
@@ -48,6 +53,7 @@ Canvas::Canvas(wxPanel* parent, std::function<void(double*)> updateLeaderboardFu
     }
 Canvas::~Canvas() {
     delete[] grid;
+    delete[] resampledGrid;
     while (!this->drawingHistory.empty()) {
         double* item = this->drawingHistory.back();
         this->drawingHistory.pop_back();
@@ -59,8 +65,8 @@ Canvas::~Canvas() {
 void Canvas::OnMouseDown(wxMouseEvent& evt) {
     //std::cout << "Mouse Down" << std::endl;
     drawing = true;
-    int x = evt.GetX() / CONSTANTS_H::SCALE;
-    int y = evt.GetY() / CONSTANTS_H::SCALE;
+    int x = evt.GetX() / CONSTANTS_H::CANSCALE;
+    int y = evt.GetY() / CONSTANTS_H::CANSCALE;
     if (grid[y * CONSTANTS_H::CANX + x] == 0) this->lastDrew = true;
     this->DrawGrid(y, x);
     Refresh();
@@ -78,13 +84,15 @@ void Canvas::OnMouseUp(wxMouseEvent& evt) {
     lastX = -1;
     lastY = -1;
     StoreState();
-    this->updateLeaderboard(this->grid);
+    // Resample and call update with the resampled buffer
+    UpdateResampled();
+    this->updateLeaderboard(this->resampledGrid);
 }
 
 void Canvas::OnMouseMove(wxMouseEvent& evt) {
     if (drawing) { // Mouse held
-        int x = evt.GetX() / CONSTANTS_H::SCALE;
-        int y = evt.GetY() / CONSTANTS_H::SCALE;
+        int x = evt.GetX() / CONSTANTS_H::CANSCALE;
+        int y = evt.GetY() / CONSTANTS_H::CANSCALE;
 
         if (lastX != -1 && lastY != -1) {
             // Bresenham's line algorithm
@@ -119,6 +127,9 @@ void Canvas::OnMouseMove(wxMouseEvent& evt) {
         lastY = y;
         // Update Frame
         Refresh();
+        // For real-time updates, resample and send latest preview
+        UpdateResampled();
+        this->updateLeaderboard(this->resampledGrid);
     }
 }
 
@@ -132,7 +143,7 @@ void Canvas::OnPaint(wxPaintEvent& evt) {
     for (int y = 0; y < CONSTANTS_H::CANY; ++y) {
         for (int x = 0; x < CONSTANTS_H::CANX; ++x) {
             if (grid[y * CONSTANTS_H::CANX + x]) {
-                dc.DrawRectangle(x * CONSTANTS_H::SCALE, y * CONSTANTS_H::SCALE, CONSTANTS_H::SCALE, CONSTANTS_H::SCALE);
+                dc.DrawRectangle(x * CONSTANTS_H::CANSCALE, y * CONSTANTS_H::CANSCALE, CONSTANTS_H::CANSCALE, CONSTANTS_H::CANSCALE);
             }
         }
     }
@@ -158,7 +169,8 @@ void Canvas::ClearCanvas() {
     this->lastDrew = true;
     Refresh();
     StoreState();
-    this->updateLeaderboard(this->grid);
+    UpdateResampled();
+    this->updateLeaderboard(this->resampledGrid);
 }
 
 void Canvas::RollBack() {
@@ -176,7 +188,8 @@ void Canvas::RollBack() {
         }
         
         Refresh();
-        this->updateLeaderboard(this->grid);
+        UpdateResampled();
+        this->updateLeaderboard(this->resampledGrid);
     }
     
 }
@@ -194,6 +207,14 @@ void Canvas::DrawGrid(const int& y, const int& x) {
     }
 }
 
+void Canvas::UpdateResampled() {
+    // call CanvasConverter to resample current grid into resampledGrid
+    if (this->resampledGrid) {
+        // Direct call to perform resampling
+        CanvasConverter::ResampleGrid(this->grid, CONSTANTS_H::CANX, CONSTANTS_H::CANY, this->resampledGrid, CONSTANTS_H::DESTX, CONSTANTS_H::DESTY);
+    }
+}
+
 bool Canvas::is_empty() {
     for (int i = 0; i < CONSTANTS_H::CANY * CONSTANTS_H::CANX; i++) {
         if (grid[i]) return false;
@@ -203,6 +224,10 @@ bool Canvas::is_empty() {
 // encapsulation
 double* Canvas::get_grid() {
     return this->grid;
+}
+
+double* Canvas::get_resampled_grid() {
+    return this->resampledGrid;
 }
 bool Canvas::get_drawing_state() {
     return this->drawing;

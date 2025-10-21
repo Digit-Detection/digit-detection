@@ -4,9 +4,9 @@
 #include "neural/Activation_Functions/CostType.h"
 
 // GUI CONSTANTS
-const int CANY = 500; // Canvas Y size
+const int CANY = 500; // Canvas Y sizes
 const int CANX = 500; // Canvas X size;
-const int SCALE = 1; // Canvas Shown Scaled size
+const int CANSCALE = 1; // Canvas Shown Scaled size
 const int TOOLSIZE = 300; // In pixels
 
 // NETWORK CONSTANTS
@@ -21,4 +21,22 @@ const double regularisation = 0.0001;   // Regularisation constant for keeping v
 
 // DATA CONSTANTS
 const int NUMDIGITS = 10; // Record digits from 0 to 9 (10 digit total)
+
+// Destination (resample) size for saved drawings. Change these to alter
+// the size drawings are scaled to before being stored / used for training.
+const int DESTX = 28; // Destination X size in pixels (MNIST is 28)
+const int DESTY = 28; // Destination Y size in pixels (MNIST is 28)
+
+// AUGMENTATION CONSTANTS
+// Scaling factors: scale down (e.g., 0.85) and scale up (e.g., 1.15)
+const double SCALEDOWN = 0.85;
+const double SCALEUP = 1.15;
+
+// Rotation (degrees). Make sure this isn't too large
+// (< 30 deg is great). Or else 6 and 9 is mixed up.
+const double ROTATEANGLE = 15.0;
+
+// Salt-and-pepper noise percentage (0.005 == 0.5%)
+const double NOISE_PERCENT = 0.005;
+
 #endif
