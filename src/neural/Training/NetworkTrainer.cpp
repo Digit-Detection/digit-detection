@@ -102,7 +102,7 @@ void NetworkTrainer::LoadData() {
         // Check for data/dataset.bin first
         const std::string dataset_path = "data/dataset.bin";
         std::ifstream f_dataset(dataset_path, std::ios::binary);
-        if (false) {
+        if (f_dataset) {
             f_dataset.close();
             std::pair<DataPoint**, int> loaded = DataSet::LoadDataPoints(dataset_path);
             if (loaded.second > 0 && loaded.first != nullptr) {

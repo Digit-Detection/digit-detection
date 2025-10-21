@@ -31,7 +31,7 @@ private:
         CallActivation activation(ActivationType::sigmoid);
         Activations* func = activation.get_activation();
 
-        std::vector<double> inputs = {0.0, 1.0, -1.0};
+        std::vector<double> inputs = {0.0, 1.0, -1.0, 99.0, -99.0};
         int n = (int)inputs.size();
 
         for (int i = 0; i < n; ++i) {
@@ -49,7 +49,7 @@ private:
         CallActivation activation(ActivationType::sigmoid);
         Activations* func = activation.get_activation();
 
-        std::vector<double> inputs = {0.0, 1.0, -1.0};
+        std::vector<double> inputs = {0.0, 1.0, -1.0, 99.0, -99.0};
         int n = (int)inputs.size();
 
         for (int i = 0; i < n; ++i) {
