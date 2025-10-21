@@ -50,7 +50,7 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
     UndoButton* undoButton = new UndoButton(clearBPanel, [drawCanvas]() {
         drawCanvas->RollBack();
     });
-    BrushPicker* brushPicker = new BrushPicker(clearBPanel, 68, [drawCanvas](int newSize) {
+    BrushPicker* brushPicker = new BrushPicker(clearBPanel, [drawCanvas](int newSize) {
         drawCanvas->set_brushSize(newSize);
     });
     

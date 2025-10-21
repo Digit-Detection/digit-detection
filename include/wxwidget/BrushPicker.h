@@ -4,7 +4,7 @@
 #include <functional>
 class BrushPicker : public wxSpinCtrl {
 public:
-    BrushPicker(wxWindow* parent, int maxSize, std::function<void(int)> canvasFunction);
+    BrushPicker(wxWindow* parent, std::function<void(int)> canvasFunction);
     ~BrushPicker();
     void LinkCanvas(std::function<void(int)> canvasFunction);
     void OnChange(wxCommandEvent& event);

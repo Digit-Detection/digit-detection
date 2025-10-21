@@ -1,14 +1,17 @@
 #include <wxwidget/BrushPicker.h>
 #include <iostream>
+#include "constants.h"
 /*
 private:
     std::function<void()> canvasLink;
 */
-BrushPicker::BrushPicker(wxWindow* parent, int maxSize, std::function<void(int)> canvasFunction) : wxSpinCtrl(parent, wxID_ANY, "") {
-    this->SetRange(1, maxSize);
-    this->SetValue(1); // initial brush size
+BrushPicker::BrushPicker(wxWindow* parent, std::function<void(int)> canvasFunction) : wxSpinCtrl(parent, wxID_ANY, "") {
+    int min_size = CONSTANTS_H::CANX / 20;
+    this->SetRange(min_size, CONSTANTS_H::CANX / 10);
+    this->SetValue(min_size); // initial brush size
     this->LinkCanvas(canvasFunction);
     Bind(wxEVT_SPINCTRL, &BrushPicker::OnChange, this);
+    canvasFunction(min_size);
 }
 BrushPicker::~BrushPicker() {}
 
