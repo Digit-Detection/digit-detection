@@ -3,6 +3,7 @@
 #include <wx/wx.h>
 #include "wxwidget/Frame.h"
 #include "neural/Training/NetworkTest.h"
+#include "neural/Activation_Functions/FunctionsTest.h"
 #include "constants.h"
 class MainApp : public wxApp {
     public:
@@ -19,8 +20,12 @@ bool MainApp::OnInit() {
 
     // Run any neural stuff here
     std::cout << "====================== RUNNING! ======================" << std::endl;
+    // Old Tests
     // NetworkTest network_test;
     // network_test.runTests();
+    // FunctionsTest func_test;
+    // func_test.runTests();
+
     NetworkData networkData = NetworkData();
     NetworkData network_data = NetworkData();
     // NeuralNetwork* network = network_data.LoadNetworkFromSaved();
@@ -43,7 +48,7 @@ bool MainApp::OnInit() {
     std::cout << "====================== Loading Training Data ======================" << std::endl;
     network_trainer.LoadData();
     std::cout << "====================== Training Network ======================" << std::endl;
-    network_trainer.StartTrainingSession(0); // AMOUNT TRAINED
+    network_trainer.StartTrainingSession(3); // AMOUNT TRAINED
 
     delete[] layer_sizes;
     delete settings;
