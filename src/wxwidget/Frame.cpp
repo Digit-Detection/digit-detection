@@ -102,13 +102,14 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
     this->Layout();
     this->Refresh();
     
-    std::cout << "Tool Panel Children: " << toolPanel->GetChildren().GetCount() << std::endl;
-    std::cout << "Button Panel Children: " << buttonPanel->GetChildren().GetCount() << std::endl;
-    std::cout << "Leaderboard Children: " << leaderboard->GetChildren().GetCount() << std::endl;
-    wxSize toolSize = toolPanel->GetSize();
-    wxSize canvasSize = canvasPanel->GetSize();
-    std::cout << "Tool Panel Size: " << toolSize.x << " x " << toolSize.y << std::endl;
-    std::cout << "Canvas Panel Size: " << canvasSize.x << " x " << canvasSize.y << std::endl;
+    // DEBUGGING CODE
+    // std::cout << "Tool Panel Children: " << toolPanel->GetChildren().GetCount() << std::endl;
+    // std::cout << "Button Panel Children: " << buttonPanel->GetChildren().GetCount() << std::endl;
+    // std::cout << "Leaderboard Children: " << leaderboard->GetChildren().GetCount() << std::endl;
+    // wxSize toolSize = toolPanel->GetSize();
+    // wxSize canvasSize = canvasPanel->GetSize();
+    // std::cout << "Tool Panel Size: " << toolSize.x << " x " << toolSize.y << std::endl;
+    // std::cout << "Canvas Panel Size: " << canvasSize.x << " x " << canvasSize.y << std::endl;
 }
 
 Frame::~Frame() {

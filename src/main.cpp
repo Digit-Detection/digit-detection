@@ -18,7 +18,7 @@ bool MainApp::OnInit() {
     const int canXSize = CONSTANTS_H::CANX * CONSTANTS_H::CANSCALE;
 
     // Run any neural stuff here
-    std::cout << "RUNNING!" << std::endl;
+    std::cout << "====================== RUNNING! ======================" << std::endl;
     // NetworkTest network_test;
     // network_test.runTests();
     NetworkData networkData = NetworkData();
@@ -40,29 +40,25 @@ bool MainApp::OnInit() {
     NetworkTrainer network_trainer(settings); // Create trainer
 
     // Train Network
-    std::cout << "CP1" << std::endl;
+    std::cout << "====================== Loading Training Data ======================" << std::endl;
     network_trainer.LoadData();
-    std::cout << "CP2" << std::endl;
+    std::cout << "====================== Training Network ======================" << std::endl;
     network_trainer.StartTrainingSession(0); // AMOUNT TRAINED
 
     delete[] layer_sizes;
     delete settings;
 
     // === Create window ===
-    std::cout << "completed 0" << std::endl;
+    std::cout << "====================== Loading Frame ======================" << std::endl;
 
     Frame* mainFrame = new Frame("Digit Detector");
-    // Window Size;
-    std::cout << "completed 1" << std::endl;
     // Center the window
     mainFrame->Center();
-    std::cout << "completed 2" << std::endl;
 
     // Complet and Show the window
     mainFrame->Show();
-    std::cout << "completed 3" << std::endl;
 
-    std::cout << "COMPLETE!" << std::endl;
+    std::cout << "====================== Project Loaded and Running ======================" << std::endl;
     return true;
 }
 
