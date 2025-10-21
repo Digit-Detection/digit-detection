@@ -4,7 +4,7 @@
 #include "neural/Data_Handling/DataSet.h"
 #include "neural/Data_Handling/CanvasConverter.h"
 #include "neural/Data_Handling/Augmentations.h"
-
+#include "wxwidget/developer/ShowDrawing.h"
 /* 
 public:
     static Canvas* canvasParent;
@@ -43,6 +43,17 @@ void DigitButton::OnClick(wxCommandEvent& event) {
     if (!DigitButton::canvasParent->is_empty()) {
         // Convert current resampled grid into multiple augmented DataPoints and append to dataset file
         double* resampled = DigitButton::canvasParent->get_resampled_grid();
+        
+        // Store Drawing State
+        // Requires (double* grid, int Y, int X, int submitValue, int scale)
+        for (int i = 0; i < CONSTANTS_H::DESTY; i++) {
+            for (int j = 0; j < CONSTANTS_H::DESTX; j++) {
+                std::cout << resampled[j * CONSTANTS_H::DESTX + i] << " ";
+            }
+            std::cout << std::endl;
+        }
+        ShowDrawing* newDrawing = new ShowDrawing(resampled, CONSTANTS_H::DESTY, CONSTANTS_H::DESTX, this->submitValue, 10);
+
         if (resampled) {
             try {
                 auto augmented = Augmentations::GenerateAugmentedDataPoints(resampled, CONSTANTS_H::DESTX, CONSTANTS_H::DESTY, this->submitValue, CONSTANTS_H::NUMDIGITS);
@@ -65,4 +76,12 @@ void DigitButton::OnClick(wxCommandEvent& event) {
     } else {
         std::cout << "Nothing to submit!" << std::endl;
     }
+}
+
+// Encapsulation
+void DigitButton::set_submitValue(int submitValue) {
+    this->submitValue = submitValue;
+}
+int DigitButton::get_submitValue() {
+    return this->submitValue;
 }

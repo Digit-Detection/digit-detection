@@ -32,6 +32,7 @@ Canvas::Canvas(wxPanel* parent, std::function<void(double*)> updateLeaderboardFu
         }
         // Allocate resampled buffer used for continuous updates (DESTX x DESTY)
         this->resampledGrid = new double[CONSTANTS_H::DESTX * CONSTANTS_H::DESTY];
+        
         // initialize resampled buffer
         for (int i = 0; i < CONSTANTS_H::DESTX * CONSTANTS_H::DESTY; ++i) this->resampledGrid[i] = 0.0;
         this->lastDrew = false;

@@ -16,12 +16,17 @@ target_include_directories(Digit_Detection PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
 
+# Link local libraries
+find_package(ZLIB REQUIRED)
+target_link_libraries(Digit_Detection PRIVATE ${ZLIB_LIBRARIES})
+
 # wxWidgets integration
 if(USE_SYSTEM_WXWIDGETS)
     find_package(wxWidgets REQUIRED COMPONENTS core base)
     include(${wxWidgets_USE_FILE})
     target_link_libraries(Digit_Detection PRIVATE ${wxWidgets_LIBRARIES})
 else()
+    find_package(ZLIB REQUIRED)
     # Build wxWidgets from submodule
     set(wxBUILD_SHARED OFF CACHE BOOL "" FORCE)
     set(wxBUILD_GUI ON CACHE BOOL "" FORCE)
