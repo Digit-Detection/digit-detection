@@ -29,14 +29,14 @@ sudo apt install libgtk-3-dev # CMake pkg for GUIs
 ```
 
 ## wxWidgets NOT installed locally
-1. Clone the project and all submodules
+1. Clone the project and all submodules (Note this will take a few minutes)
 
 ```bash
-git clone --recursive https://github.com/wxWidgets/wxWidgets.git lib/wxWidgets
+git clone https://github.com/Digit-Detection/digit-detection.git --recursive
 cd digit-detection
 ```
 
-2. Build and run the project (note this may take a few minutes to fully build)
+2. Build and run the project
 
 ```bash
 make run
