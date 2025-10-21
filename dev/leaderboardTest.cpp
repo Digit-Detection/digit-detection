@@ -69,7 +69,7 @@ double* customDouble(int size) {
 class Frame : public wxFrame {
     public:
         // Create unresizeable frame
-        Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName, wxDefaultPosition, wxSize(CANX * CONSTANTS_H::SCALE, CANY * CONSTANTS_H::SCALE), wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX)) {
+        Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName, wxDefaultPosition, wxSize(CANX * CONSTANTS_H::CANSCALE, CANY * CONSTANTS_H::CANSCALE), wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX)) {
             this->custInt = customInts(CONSTANTS_H::NUMDIGITS);
             this->custDbl = customDouble(CONSTANTS_H::NUMDIGITS);
             myLeaderboard = new Leaderboard(this, custInt, custDbl);

@@ -17,6 +17,7 @@ class Canvas : public wxPanel{
         void RollBack();
         // encapsulation
         double* get_grid();
+        double* get_resampled_grid();
         bool get_drawing_state();
         int get_brushSize();
         void set_brushSize(int newSize);
@@ -27,6 +28,7 @@ class Canvas : public wxPanel{
         int lastX;
         int lastY; // Last mouse pos
         double* grid; // 2D array represented in 1D
+        double* resampledGrid; // resampled buffer (DESTX x DESTY)
         bool drawing; // Is holding left click
         bool lastDrew; // Check if any changes to canvas has been made on last drew
         std::deque<double*> drawingHistory; // Store copies
@@ -39,4 +41,5 @@ class Canvas : public wxPanel{
         void OnPaint(wxPaintEvent& evt);      
         void StoreState(); // Store canvas state for rollback       
         void DrawGrid(const int& y, const int& x);
+        void UpdateResampled();
 };

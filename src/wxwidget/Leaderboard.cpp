@@ -5,7 +5,7 @@
 Leaderboard::Leaderboard(wxWindow* parent)
     : wxScrolledWindow(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL)
     {   
-        this->SetMinSize(wxSize(CONSTANTS_H::TOOLSIZE, CONSTANTS_H::CANY * CONSTANTS_H::SCALE));    
+        this->SetMinSize(wxSize(CONSTANTS_H::TOOLSIZE, CONSTANTS_H::CANY * CONSTANTS_H::CANSCALE));    
         // ================ Scrollable window modification ================
         this->SetScrollRate(10, 10);
         this->sizer = new wxBoxSizer(wxVERTICAL);

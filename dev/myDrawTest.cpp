@@ -8,7 +8,7 @@
 class Canvas : public wxPanel{
     public:
         // Parent window, 
-        Canvas(wxFrame* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(CANX * CONSTANTS_H::SCALE, CANY * CONSTANTS_H::SCALE)) {
+        Canvas(wxFrame* parent) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(CANX * CONSTANTS_H::CANSCALE, CANY * CONSTANTS_H::CANSCALE)) {
             this->SetBackgroundColour(wxColour(wxColor(*wxWHITE))); // Set Canvas Color
 
             // Bind events
@@ -42,8 +42,8 @@ class Canvas : public wxPanel{
 
         void OnMouseMove(wxMouseEvent& evt) {
             if (drawing) { // Mouse held
-                int x = evt.GetX() / CONSTANTS_H::SCALE;
-                int y = evt.GetY() / CONSTANTS_H::SCALE;
+                int x = evt.GetX() / CONSTANTS_H::CANSCALE;
+                int y = evt.GetY() / CONSTANTS_H::CANSCALE;
 
                 if (lastX != -1 && lastY != -1) {
                     // Bresenham's line algorithm
@@ -89,7 +89,7 @@ class Canvas : public wxPanel{
             for (int y = 0; y < CONSTANTS_H::CANY; ++y) {
                 for (int x = 0; x < CONSTANTS_H::CANX; ++x) {
                     if (grid[y][x]) {
-                        dc.DrawRectangle(x * CONSTANTS_H::SCALE, y * CONSTANTS_H::SCALE, CONSTANTS_H::SCALE, CONSTANTS_H::SCALE);
+                        dc.DrawRectangle(x * CONSTANTS_H::CANSCALE, y * CONSTANTS_H::CANSCALE, CONSTANTS_H::CANSCALE, CONSTANTS_H::CANSCALE);
                     }
                 }
             }
@@ -101,9 +101,9 @@ class Canvas : public wxPanel{
 class Frame : public wxFrame {
     public:
         // Create unresizeable frame
-        Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName, wxDefaultPosition, wxSize(CANX * CONSTANTS_H::SCALE, CANY * CONSTANTS_H::SCALE), wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX)) {
+        Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName, wxDefaultPosition, wxSize(CANX * CONSTANTS_H::CANSCALE, CANY * CONSTANTS_H::CANSCALE), wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX)) {
             myCanvas = new Canvas(this);
-            myCanvas->SetMinSize(wxSize(CONSTANTS_H::CANX * CONSTANTS_H::SCALE, CONSTANTS_H::CANY * CONSTANTS_H::SCALE));
+            myCanvas->SetMinSize(wxSize(CONSTANTS_H::CANX * CONSTANTS_H::CANSCALE, CONSTANTS_H::CANY * CONSTANTS_H::CANSCALE));
 
             wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
             sizer->Add(myCanvas, 0, wxALIGN_CENTER);

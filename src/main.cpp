@@ -14,8 +14,8 @@ class MainApp : public wxApp {
 // On App run (main function)
 bool MainApp::OnInit() {
     // Variables
-    const int canYSize = CONSTANTS_H::CANY * CONSTANTS_H::SCALE;
-    const int canXSize = CONSTANTS_H::CANX * CONSTANTS_H::SCALE;
+    const int canYSize = CONSTANTS_H::CANY * CONSTANTS_H::CANSCALE;
+    const int canXSize = CONSTANTS_H::CANX * CONSTANTS_H::CANSCALE;
 
     // Run any neural stuff here
     std::cout << "RUNNING!" << std::endl;

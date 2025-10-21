@@ -3,6 +3,7 @@
 #include "neural/Data_Handling/DataPoint.h"
 #include "neural/Data_Handling/DataSet.h"
 #include "neural/Data_Handling/CanvasConverter.h"
+#include "neural/Data_Handling/Augmentations.h"
 
 /* 
 public:
@@ -11,6 +12,7 @@ protected:
     int submitValue;
     void OnClick(wxCommandEvent& event);
 */
+
 Canvas* DigitButton::canvasParent = nullptr;
 
 DigitButton::DigitButton(wxWindow* parent, std::string digit)
@@ -39,19 +41,23 @@ void DigitButton::OnClick(wxCommandEvent& event) {
     
     // prevent submission of empty grid
     if (!DigitButton::canvasParent->is_empty()) {
-        // Convert current grid into a DataPoint and append to dataset file
-        if (DigitButton::canvasParent->get_grid()) {
+        // Convert current resampled grid into multiple augmented DataPoints and append to dataset file
+        double* resampled = DigitButton::canvasParent->get_resampled_grid();
+        if (resampled) {
             try {
-                DataPoint* dp = CanvasConverter::GridToDataPoint(DigitButton::canvasParent->get_grid(), CONSTANTS_H::CANX, CONSTANTS_H::CANY, this->submitValue, CONSTANTS_H::NUMDIGITS, 28);
-                // Append to file inside data/ directory
-                DataSet::AppendDataPoint(dp, "data/user_drawings.bin");
-                std::cout << "Saved drawing as label " << this->submitValue << " to data/user_drawings.bin" << std::endl;
-                delete dp;
+                auto augmented = Augmentations::GenerateAugmentedDataPoints(resampled, CONSTANTS_H::DESTX, CONSTANTS_H::DESTY, this->submitValue, CONSTANTS_H::NUMDIGITS);
+                int saved = 0;
+                for (auto dp : augmented) {
+                    DataSet::AppendDataPoint(dp, "data/user_drawings.bin");
+                    ++saved;
+                    delete dp;
+                }
+                std::cout << "Saved " << saved << " augmented drawings as label " << this->submitValue << " to data/user_drawings.bin" << std::endl;
             } catch (const std::exception& ex) {
-                std::cerr << "Failed to save drawing: " << ex.what() << std::endl;
+                std::cerr << "Failed to save augmented drawings: " << ex.what() << std::endl;
             }
         } else {
-            std::cerr << "No grid available to save." << std::endl;
+            std::cerr << "No resampled grid available to save." << std::endl;
         }
         
         // Remove submission on clear()
