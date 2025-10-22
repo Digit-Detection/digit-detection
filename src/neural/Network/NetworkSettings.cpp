@@ -24,51 +24,51 @@ NetworkSettings::NetworkSettings() {
     this->regularisation = CONSTANTS_H::regularisation;
 }
 
-void NetworkSettings::set_layer_sizes(int* layer_sizes) {
+void NetworkSettings::setLayerSizes(int* layer_sizes) {
     this->layer_sizes = layer_sizes;
 }
         
-void NetworkSettings::set_num_layers(int num_layers) {
+void NetworkSettings::setNumLayers(int num_layers) {
     this->num_layers = num_layers;
 }
         
-int* NetworkSettings::get_layer_sizes() {
+int* NetworkSettings::getLayerSizes() {
     return this->layer_sizes;
 }
         
-int NetworkSettings::get_num_layers() {
+int NetworkSettings::getNumLayers() {
     return this->num_layers;
 }
         
-Activations* NetworkSettings::get_activation_type() {
+Activations* NetworkSettings::getActivationType() {
     return this->activation_type->get_activation();
 }
         
-Activations* NetworkSettings::get_output_activation_type() {
+Activations* NetworkSettings::getOutputActivationType() {
     return this->output_activation_type->get_activation();
 }
         
-Costs* NetworkSettings::get_cost_type() {
+Costs* NetworkSettings::getCostType() {
     return this->cost_type->get_activation();
 }
         
-double NetworkSettings::get_initial_learning_rate() {
+double NetworkSettings::getInitialLearningRate() {
     return this->initial_learning_rate;
 }
         
-double NetworkSettings::get_learn_rate_decay() {
+double NetworkSettings::getLearnRateDecay() {
     return this->learn_rate_decay;
 }
         
-int NetworkSettings::get_mini_batch_size() {
+int NetworkSettings::getMiniBatchSize() {
     return this->mini_batch_size;
 }
         
-double NetworkSettings::get_momentum() {
+double NetworkSettings::getMomentum() {
     return this->momentum;
 }
         
-double NetworkSettings::get_regularisation() {
+double NetworkSettings::getRegularisation() {
     return this->regularisation;
 }
 

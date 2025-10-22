@@ -213,7 +213,9 @@ void Canvas::RollBack() {
     
 }
 
+// Draw with brush sie
 void Canvas::DrawGrid(const int& y, const int& x) {
+    // Draw on position, and draw on points around the position
     for (int dy = -brushSize / 2; dy <= brushSize / 2; ++dy) {
         for (int dx = -brushSize / 2; dx <= brushSize / 2; ++dx) {
             int px = x + dx;

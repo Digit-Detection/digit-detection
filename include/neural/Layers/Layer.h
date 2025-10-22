@@ -30,16 +30,16 @@ class Layer {
         Layer(LoadLayer* layer_params);
 
         //Encapsulation Methods
-        LoadLayer* get_layer_data();
-        int get_num_input_nodes();
-        int get_num_output_nodes();
-        void set_activation(Activations* activation);
+        LoadLayer* getLayerData();
+        int getNumInputNodes();
+        int getNumOutputNodes();
+        void setActivation(Activations* activation);
         
-        double get_weight(int node_in, int node_out);
-        int get_flat_weight_index(int input_node_index, int output_node_index);
+        double getWeight(int node_in, int node_out);
+        int getFlatWeightIndex(int input_node_index, int output_node_index);
 
         // Initialization with random values
-        void init_random_weights();
+        void initRandomWeights();
 
         // Calculate Output of the layer
         double* Output(double* inputs);

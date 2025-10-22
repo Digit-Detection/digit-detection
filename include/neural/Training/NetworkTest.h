@@ -17,8 +17,8 @@ class NetworkTest {
             layer_sizes[2] = 2;   // output layer (two classes)
 
             // Configure Settings
-            settings->set_layer_sizes(layer_sizes);
-            settings->set_num_layers(3);
+            settings->setLayerSizes(layer_sizes);
+            settings->setNumLayers(3);
             NetworkTrainer network_trainer(settings); // Create trainer
 
             const int N = 200;
@@ -89,7 +89,7 @@ class NetworkTest {
             
             EvaluationData* validation_eval = evaluator.Evaluate(network, data, N);
 
-            std::cout << validation_eval->get_num_correct() / (double)validation_eval->get_total() * 100.0 << "%" << std::endl;
+            std::cout << validation_eval->getNumCorrect() / (double)validation_eval->getTotal() * 100.0 << "%" << std::endl;
 
             // Cleaning up :)
             for (int i = 0; i < N; ++i) {

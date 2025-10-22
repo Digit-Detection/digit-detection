@@ -16,7 +16,7 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
 {  
     NetworkData neural;
     this->network = neural.LoadNetworkFromSaved();  
-    std::cout << "Network Initialized" << std::endl; 
+    std::cout << "Frame : Network Initialized" << std::endl; 
     
     // =========== Develop Containers ===========
     wxPanel* canvasPanel = new wxPanel(this, wxID_ANY);
@@ -26,11 +26,12 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
     wxPanel* toolPanel = new wxPanel(this, wxID_ANY);
     toolPanel->SetBackgroundColour(wxColor(100, 200, 100));
     toolPanel->SetMinSize(wxSize(CONSTANTS_H::TOOLSIZE, CONSTANTS_H::CANY * CONSTANTS_H::CANSCALE));
-    
+    std::cout << "Frame : Sizers Developed" << std::endl;
     // =========== Develop Canvas ===========
     Canvas* drawCanvas = new Canvas(canvasPanel, [this](double* grid) {
         this->UpdateLeaderboard(grid);
     });
+    std::cout << "Frame : Canvas Developed" << std::endl;
     
     wxBoxSizer* canvasSizer = new wxBoxSizer(wxVERTICAL);
     canvasSizer->Add(drawCanvas, 0, wxEXPAND | wxALL, 0);
@@ -53,6 +54,7 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
     BrushPicker* brushPicker = new BrushPicker(clearBPanel, [drawCanvas](int newSize) {
         drawCanvas->set_brushSize(newSize);
     });
+    std::cout << "Frame : Utility Panel Developed" << std::endl;
     
     wxBoxSizer* centerSizer = new wxBoxSizer(wxHORIZONTAL);
     centerSizer->Add(clearButton, 0, wxALIGN_CENTER | wxALL, 2);
@@ -72,8 +74,9 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
     // =========== Develop Leaderboard ===========
     this->leaderboard = new Leaderboard(toolPanel);
     this->UpdateLeaderboard(drawCanvas->get_grid());
-    
-    // =========== Apply Sizers (Bottom-up approach) ===========
+    std::cout << "Frame : Leaderboard panel Developed" << std::endl;
+
+    // =========== Apply Sizers ===========
     
     // Button Panel: Clear/Undo/Brush (20%) + NumPad (80%)
     wxBoxSizer* buttonSizer = new wxBoxSizer(wxVERTICAL);
@@ -86,14 +89,16 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
     toolSizer->Add(buttonPanel, 4, wxEXPAND | wxALL, 0);
     toolSizer->Add(leaderboard, 6, wxEXPAND | wxALL, 0);
     toolPanel->SetSizer(toolSizer);
-    
+    std::cout << "Frame : features linked to Sizers" << std::endl;
+
     // Main Sizer: Canvas + Tools
     wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
     mainSizer->Add(canvasPanel, 1, wxEXPAND | wxALL, 0);
     mainSizer->Add(toolPanel, 0, wxEXPAND | wxALL, 0);
-
     this->SetSizer(mainSizer);
-    
+
+    std::cout << "Frame : Sizers linked to frame" << std::endl;
+
     // Set explicit client size to prevent compression
     int totalWidth = CONSTANTS_H::CANX * CONSTANTS_H::CANSCALE + CONSTANTS_H::TOOLSIZE;
     int totalHeight = CONSTANTS_H::CANY * CONSTANTS_H::CANSCALE;
@@ -101,7 +106,8 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
     
     this->Layout();
     this->Refresh();
-    
+    std::cout << "Frame : Updated and Ready" << std::endl;
+
     // DEBUGGING CODE
     // std::cout << "Tool Panel Children: " << toolPanel->GetChildren().GetCount() << std::endl;
     // std::cout << "Button Panel Children: " << buttonPanel->GetChildren().GetCount() << std::endl;

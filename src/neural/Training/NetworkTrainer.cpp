@@ -28,7 +28,7 @@ NetworkTrainer::NetworkTrainer() {
     this->training_batches = nullptr;
     this->num_training_batches = 0;
     
-    this->current_learn_rate = this->network_settings->get_initial_learning_rate();
+    this->current_learn_rate = this->network_settings->getInitialLearningRate();
     this->data_loaded = false;
     this->epoch = 0;
 }
@@ -50,7 +50,7 @@ NetworkTrainer::NetworkTrainer(NetworkSettings* settings) {
     this->training_batches = nullptr;
     this->num_training_batches = 0;
 
-    this->current_learn_rate = this->network_settings->get_initial_learning_rate();
+    this->current_learn_rate = this->network_settings->getInitialLearningRate();
     this->data_loaded = false;
     this->epoch = 0;
 }
@@ -79,16 +79,21 @@ void NetworkTrainer::StartTrainingSession(int num_epochs) {
 
     // Initialize the neural network from settings.
     // NeuralNetwork takes ownership of the layer size array internally.
-    NeuralNetwork* neural_network = new NeuralNetwork(this->network_settings->get_layer_sizes(), this->network_settings->get_num_layers());
-    neural_network->set_activation_function(this->network_settings->get_activation_type(), this->network_settings->get_output_activation_type());
-    neural_network->set_cost_function(this->network_settings->get_cost_type());
+    NeuralNetwork* neural_network = new NeuralNetwork(this->network_settings->getLayerSizes(), this->network_settings->getNumLayers());
+    neural_network->setActivationFunction(this->network_settings->getActivationType(), this->network_settings->getOutputActivationType());
+    neural_network->set_cost_function(this->network_settings->getCostType());
 
     // Main training loop: run "num_epochs" epochs of learning.
+    // Initializes the neural network
+    NeuralNetwork* neural_network = new NeuralNetwork(this->network_settings->getLayerSizes(), this->network_settings->getNumLayers());
+    neural_network->setActivationFunction(this->network_settings->getActivationType(), this->network_settings->getOutputActivationType());
+    neural_network->set_cost_function(this->network_settings->getCostType());
+    // Learning
     for (int epoch = 1; epoch <= num_epochs; epoch++) {
         // Process every mini-batch (training_batches was created by LoadData()).
         for (int batch = 0; batch < this->num_training_batches; batch++) {
-            neural_network->Learn(this->training_batches[batch]->get_data(), this->network_settings->get_mini_batch_size(), this->current_learn_rate, 
-                                this->network_settings->get_regularisation(), this->network_settings->get_momentum());
+            neural_network->Learn(this->training_batches[batch]->getData(), this->network_settings->getMiniBatchSize(), this->current_learn_rate, 
+                                this->network_settings->getRegularisation(), this->network_settings->getMomentum());
         }
 
         // Update the public "epoch" counter to the current epoch index.
@@ -100,12 +105,12 @@ void NetworkTrainer::StartTrainingSession(int num_epochs) {
         EvaluationData* validation_eval = NetworkEvaluator::Evaluate(neural_network, this->validation_data, this->validation_data_length);
         
         // Print a concise progress line with training/validation accuracies.
-        std::cout << "Epoch " << this->epoch << ": Training Accuracy: " << train_eval->get_num_correct() / (double)train_eval->get_total() * 100.0 << "% Validation Accuracy: " <<
-        validation_eval->get_num_correct() / (double)validation_eval->get_total() * 100.0 << "%" << std::endl;
+        std::cout << "Epoch " << this->epoch << ": Training Accuracy: " << train_eval->getNumCorrect() / (double)train_eval->getTotal() * 100.0 << "% Validation Accuracy: " <<
+        validation_eval->getNumCorrect() / (double)validation_eval->getTotal() * 100.0 << "%" << std::endl;
 
         // Prepare for the next epoch: shuffle mini-batches and apply learning-rate decay.
         DatasetHandling::ShuffleBatches(this->training_batches, this->num_training_batches);
-        this->current_learn_rate = (1.0 / (1.0 + this->network_settings->get_learn_rate_decay() * this->epoch)) * this->network_settings->get_initial_learning_rate();
+        this->current_learn_rate = (1.0 / (1.0 + this->network_settings->getLearnRateDecay() * this->epoch)) * this->network_settings->getInitialLearningRate();
 
         // Release evaluation objects for this epoch.
         delete train_eval;
@@ -117,7 +122,7 @@ void NetworkTrainer::StartTrainingSession(int num_epochs) {
     NeuralNetwork* prev_network = network_data.LoadNetworkFromSaved();
     EvaluationData* validation_eval = NetworkEvaluator::Evaluate(neural_network, this->validation_data, this->validation_data_length);
     // Persist the trained network and its validation accuracy.
-    network_data.SaveNetworkToSaved(neural_network, validation_eval->get_num_correct() / (double)validation_eval->get_total());
+    network_data.SaveNetworkToSaved(neural_network, validation_eval->getNumCorrect() / (double)validation_eval->getTotal());
     
     // Cleanup local resources.
     delete prev_network;
@@ -260,9 +265,9 @@ void NetworkTrainer::LoadData() {
 
                 auto augment_and_append = [&](DataPoint** arr, int n) {
                     for (int i = 0; i < n; ++i) {
-                        int width = (arr[i]->get_inputs_length() == CONSTANTS_H::DESTX * CONSTANTS_H::DESTY) ? CONSTANTS_H::DESTX : 28;
-                        int height = (arr[i]->get_inputs_length() == CONSTANTS_H::DESTX * CONSTANTS_H::DESTY) ? CONSTANTS_H::DESTY : 28;
-                        std::vector<DataPoint*> aug = Augmentations::GenerateAugmentedDataPoints(arr[i]->get_inputs(), width, height, arr[i]->get_label(), CONSTANTS_H::NUMDIGITS);
+                        int width = (arr[i]->getInputsLength() == CONSTANTS_H::DESTX * CONSTANTS_H::DESTY) ? CONSTANTS_H::DESTX : 28;
+                        int height = (arr[i]->getInputsLength() == CONSTANTS_H::DESTX * CONSTANTS_H::DESTY) ? CONSTANTS_H::DESTY : 28;
+                        std::vector<DataPoint*> aug = Augmentations::GenerateAugmentedDataPoints(arr[i]->getInputs(), width, height, arr[i]->getLabel(), CONSTANTS_H::NUMDIGITS);
                         all_augmented.insert(all_augmented.end(), aug.begin(), aug.end());
                     }
                 };
@@ -270,6 +275,10 @@ void NetworkTrainer::LoadData() {
                 if (user_n > 0 && user_arr != nullptr) augment_and_append(user_arr, user_n);
                 if (mnist_n > 0 && mnist_arr != nullptr) augment_and_append(mnist_arr, mnist_n);
 
+                for (int i = 0; i < user_n; ++i) {
+                    std::vector<DataPoint*> aug = Augmentations::GenerateAugmentedDataPoints(user_arr[i]->getInputs(), user_arr[i]->getInputsLength() == CONSTANTS_H::DESTX * CONSTANTS_H::DESTY ? CONSTANTS_H::DESTX : 28, user_arr[i]->getInputsLength() == CONSTANTS_H::DESTX * CONSTANTS_H::DESTY ? CONSTANTS_H::DESTY : 28, user_arr[i]->getLabel(), CONSTANTS_H::NUMDIGITS);
+                    all_augmented.insert(all_augmented.end(), aug.begin(), aug.end());
+                }
                 std::cout << "Saving augmented dataset to " << dataset_path << " (" << all_augmented.size() << " datapoints)...\n";
                 DataSet::SaveDataPoints(all_augmented.data(), all_augmented.size(), dataset_path);
 
@@ -313,7 +322,7 @@ void NetworkTrainer::LoadData() {
     this->validation_data = result.second.first;
     this->validation_data_length = result.second.second;
 
-    std::pair<Batch**, int> result1 = DatasetHandling::CreateMiniBatches(this->training_data, this->training_data_length, this->network_settings->get_mini_batch_size());
+    std::pair<Batch**, int> result1 = DatasetHandling::CreateMiniBatches(this->training_data, this->training_data_length, this->network_settings->getMiniBatchSize());
     this->training_batches = result1.first;
     this->num_training_batches = result1.second;
     this->data_loaded = true;

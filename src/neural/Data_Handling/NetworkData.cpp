@@ -51,7 +51,7 @@ void NetworkData::SaveNetworkToSaved(NeuralNetwork* network, double new_accuracy
     }
 
     // Convert live network to a LoadNetwork object
-    LoadNetwork* saver = network->get_network_data();
+    LoadNetwork* saver = network->getNetworkData();
 
     // Accuracy writing
     file.write(reinterpret_cast<const char*>(&new_accuracy), sizeof(double));

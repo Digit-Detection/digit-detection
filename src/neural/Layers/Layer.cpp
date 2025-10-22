@@ -21,7 +21,7 @@ Layer::Layer(int num_input_nodes, int num_output_nodes) {
     this->weight_vels = new double[this->len_weights];
     this->bias_vels = new double[this->len_biases];
 
-    this->init_random_weights();
+    this->initRandomWeights();
     // Initializing biases
     for (int i = 0; i < this->len_biases; i++) {
         this->biases[i] = 0.0;
@@ -65,7 +65,7 @@ Layer::Layer(LoadLayer* layer_params) {
     }
 }
 
-LoadLayer* Layer::get_layer_data() {
+LoadLayer* Layer::getLayerData() {
     // Returns a loadlayer struct for saving the layer data
     LoadLayer* layer_params = new LoadLayer();
     layer_params->num_input_nodes = this->num_input_nodes;
@@ -87,30 +87,30 @@ LoadLayer* Layer::get_layer_data() {
 }
 
 //Encapsulation Methods
-int Layer::get_num_input_nodes() {
+int Layer::getNumInputNodes() {
     return this->num_input_nodes;
 }
         
-int Layer::get_num_output_nodes() {
+int Layer::getNumOutputNodes() {
     return this->num_output_nodes;
 }
         
-void Layer::set_activation(Activations* activation) {
+void Layer::setActivation(Activations* activation) {
     delete this->activation;
     this->activation = new CallActivation(activation->GetType());
 }
         
-double Layer::get_weight(int input_node, int output_node) {
+double Layer::getWeight(int input_node, int output_node) {
     int flat_index = output_node * this->num_input_nodes + input_node;
     return this->weights[flat_index];
 }
 
-int Layer::get_flat_weight_index(int input_node_index, int output_node_index) {
+int Layer::getFlatWeightIndex(int input_node_index, int output_node_index) {
     return output_node_index * this->num_input_nodes + input_node_index;
 }
 
 // Initialization with random values
-void Layer::init_random_weights() {
+void Layer::initRandomWeights() {
     // Xavier/He initialization
     double scale;
     if (this->activation->get_activation()->GetType() == relu) {
@@ -139,7 +139,7 @@ double* Layer::Output(double* inputs) {
         double weighted_input = this->biases[output_node];
 
         for (int input_node = 0; input_node < this->num_input_nodes; input_node++) {
-            weighted_input += inputs[input_node] * this->get_weight(input_node, output_node);
+            weighted_input += inputs[input_node] * this->getWeight(input_node, output_node);
         }
         weighted_inputs[output_node] = weighted_input;
     }
@@ -156,22 +156,22 @@ double* Layer::Output(double* inputs) {
         
 std::pair<double*, int> Layer::Output(double* inputs, int inputs_length, LayerLearningData* learn_data) {
     // Same functions as above but for LayerLearningData: this is for learning
-    learn_data->set_inputs(inputs);
+    learn_data->setInputs(inputs);
 
     for (int output_node = 0; output_node < this->num_output_nodes; output_node++) {
         double weighted_input = this->biases[output_node];
 
         for (int input_node = 0; input_node < this->num_input_nodes; input_node++) {
-            weighted_input += inputs[input_node] * this->get_weight(input_node, output_node);
+            weighted_input += inputs[input_node] * this->getWeight(input_node, output_node);
         }
-        learn_data->set_weighted_inputs(output_node, weighted_input);
+        learn_data->setWeightedInputs(output_node, weighted_input);
     }
 
-    for (int output_node = 0; output_node < learn_data->get_size(); output_node++) {
-        learn_data->set_activations(output_node, this->activation->get_activation()->Activate(learn_data->get_weighted_inputs(), this->num_output_nodes, output_node));
+    for (int output_node = 0; output_node < learn_data->getSize(); output_node++) {
+        learn_data->setActivations(output_node, this->activation->get_activation()->Activate(learn_data->getWeightedInputs(), this->num_output_nodes, output_node));
     }
 
-    return std::make_pair(learn_data->get_activations(), learn_data->get_size());
+    return std::make_pair(learn_data->getActivations(), learn_data->getSize());
 }
 
 // Apply previously calculated gradients, updating weights and biases, and resetting the gradients
@@ -201,11 +201,11 @@ void Layer::ApplyGradients(double learn_rate, double regularisation, double mome
 
 // Calculates node values for the output layer -> the partial derivative of the cost with respect to weighted input
 void Layer::OutputLayerNodeValues(LayerLearningData* learn_data, double* expected_outputs, Costs* cost) {
-    for (int i = 0; i < learn_data->get_size(); i++) {
+    for (int i = 0; i < learn_data->getSize(); i++) {
         // Partial Derivatives for the current node: cost/activation and activation/weighted_input
-        double cost_derivative = cost->Der(learn_data->get_activations()[i], expected_outputs[i]);
-        double activation_derivative = this->activation->get_activation()->Der(learn_data->get_weighted_inputs(), learn_data->get_size(), i);
-        learn_data->set_node_values(i, cost_derivative * activation_derivative);
+        double cost_derivative = cost->Der(learn_data->getActivations()[i], expected_outputs[i]);
+        double activation_derivative = this->activation->get_activation()->Der(learn_data->getWeightedInputs(), learn_data->getSize(), i);
+        learn_data->setNodeValues(i, cost_derivative * activation_derivative);
     }
 
 }
@@ -216,30 +216,30 @@ void Layer::HiddenLayerNodeValues(LayerLearningData* learn_data, Layer* old_laye
         double new_node_value = 0.0;
         for (int old_node_index = 0; old_node_index < len_old_node_values; old_node_index++) {
             // Partial Derivative of the weighted input with respect to the input
-            double weighted_input_derivative = old_layer->get_weight(new_node_index, old_node_index);
+            double weighted_input_derivative = old_layer->getWeight(new_node_index, old_node_index);
             new_node_value += weighted_input_derivative * old_node_values[old_node_index];
         }
-        new_node_value *= this->activation->get_activation()->Der(learn_data->get_weighted_inputs(), learn_data->get_size(), new_node_index);
-        learn_data->set_node_values(new_node_index, new_node_value);
+        new_node_value *= this->activation->get_activation()->Der(learn_data->getWeightedInputs(), learn_data->getSize(), new_node_index);
+        learn_data->setNodeValues(new_node_index, new_node_value);
     }
 }
 
 // Update Gradients
 void Layer::UpdateGradients(LayerLearningData* learn_data) {
     for (int output_node = 0; output_node < this->num_output_nodes; output_node++) {
-        double node_value = learn_data->get_node_values(output_node);
+        double node_value = learn_data->getNodeValues(output_node);
         for (int input_node = 0; input_node < this->num_input_nodes; input_node++) {
             // Partial Derivative of cost/weight of current connection
-            double derivativeCost_Weight = learn_data->get_inputs(input_node) * node_value;
+            double derivativeCost_Weight = learn_data->getInputs(input_node) * node_value;
             // cost_gradient_w stores these partial derivatives for each weight
             // NOTE: Gradient is added instead of set to calculate average gradient for the batch
-            this->cost_gradient_w[this->get_flat_weight_index(input_node, output_node)] += derivativeCost_Weight;
+            this->cost_gradient_w[this->getFlatWeightIndex(input_node, output_node)] += derivativeCost_Weight;
         }
     }
 
     for (int output_node = 0; output_node < this->num_output_nodes; output_node++) {
         // Partial Derivative of cost/bias
-        double derivativeCost_Bias = 1.0 * learn_data->get_node_values(output_node);
+        double derivativeCost_Bias = 1.0 * learn_data->getNodeValues(output_node);
         this->cost_gradient_b[output_node] += derivativeCost_Bias;
     }
 }

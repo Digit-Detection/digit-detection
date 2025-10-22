@@ -14,16 +14,16 @@ class LayerLearningData {
     public:
         LayerLearningData();
         LayerLearningData(Layer* layer);
-        void set_inputs(double* inputs);
-        void set_weighted_inputs(int index, double value);
-        double* get_weighted_inputs();
-        int get_size();
-        void set_activations(int index, double value);
-        double* get_activations();
-        void set_node_values(int index, double value);
-        double* get_node_values();
-        double get_node_values(int index);
-        double get_inputs(int index);
+        void setInputs(double* inputs);
+        void setWeightedInputs(int index, double value);
+        double* getWeightedInputs();
+        int getSize();
+        void setActivations(int index, double value);
+        double* getActivations();
+        void setNodeValues(int index, double value);
+        double* getNodeValues();
+        double getNodeValues(int index);
+        double getInputs(int index);
         ~LayerLearningData();
 };
 
