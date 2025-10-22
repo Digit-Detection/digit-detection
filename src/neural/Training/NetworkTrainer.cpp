@@ -84,10 +84,6 @@ void NetworkTrainer::StartTrainingSession(int num_epochs) {
     neural_network->set_cost_function(this->network_settings->getCostType());
 
     // Main training loop: run "num_epochs" epochs of learning.
-    // Initializes the neural network
-    NeuralNetwork* neural_network = new NeuralNetwork(this->network_settings->getLayerSizes(), this->network_settings->getNumLayers());
-    neural_network->setActivationFunction(this->network_settings->getActivationType(), this->network_settings->getOutputActivationType());
-    neural_network->set_cost_function(this->network_settings->getCostType());
     // Learning
     for (int epoch = 1; epoch <= num_epochs; epoch++) {
         // Process every mini-batch (training_batches was created by LoadData()).
