@@ -45,23 +45,23 @@ bool MainApp::OnInit() {
     NetworkTrainer network_trainer(settings); // Create trainer
 
     // Train Network
-    std::cout << "====================== Loading Training Data ======================" << std::endl;
+    std::cout << "Neural : Loading Training Data" << std::endl;
     network_trainer.LoadData();
-    std::cout << "====================== Training Network ======================" << std::endl;
+    std::cout << "Neural : Training Network" << std::endl;
     network_trainer.StartTrainingSession(1); // Amount trained. Change this when testing program.
 
     delete[] layer_sizes;
     delete settings;
 
     // === Create window ===
-    std::cout << "====================== Loading Frame ======================" << std::endl;
-
+    std::cout << "GUI : Loading Frame" << std::endl;
     Frame* mainFrame = new Frame("Digit Detector");
-    // Center the window
-    mainFrame->Center();
+    std::cout << "GUI : Frame Loaded" << std::endl;
 
-    // Complet and Show the window
+    // Finish Frame Window
+    mainFrame->Center();
     mainFrame->Show();
+    std::cout << "Frame : Revealed" << std::endl;
 
     std::cout << "====================== Project Loaded and Running ======================" << std::endl;
     return true;
