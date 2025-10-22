@@ -91,7 +91,7 @@ class NetworkTest {
 
             std::cout << validation_eval->get_num_correct() / (double)validation_eval->get_total() * 100.0 << "%" << std::endl;
 
-            // Clean Up
+            // Cleaning up :)
             for (int i = 0; i < N; ++i) {
                 delete data[i];
             }
