@@ -24,7 +24,9 @@ class Leaderboard : public wxScrolledWindow {
                 payload[i] = {numValues[i], probability[i]};
             }
             sort(payload.begin(), payload.end(), [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
-                if (a.second == b.second) return a.first > b.first; // decreasing by value
+                if (a.second == b.second) {
+                    return a.first > b.first; // decreasing by value
+                }
                 return a.second > b.second; // decreasing by probability
             });
             // ================ Scrollable window modification ================

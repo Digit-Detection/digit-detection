@@ -3,27 +3,49 @@
 #include <iostream>
 #include "constants.h"
 
-// Helper: clamp
+// Helper: clamp value into [0,1]
+// This ensures numeric resampling values are clamped to the valid input range
+// used by the neural network (0 = background, 1 = foreground).
 static inline double clamp01(double v) {
-    if (v < 0.0) return 0.0;
-    if (v > 1.0) return 1.0;
+    if (v < 0.0) {
+        return 0.0;
+    }
+    if (v > 1.0) {
+        return 1.0;
+    }
     return v;
 }
 
 // Bilinear sample at floating coords (x, y) in source grid
 static double bilinear_sample(const double* src, int src_w, int src_h, double x, double y) {
-    if (src_w <= 0 || src_h <= 0) return 0.0;
+    if (src_w <= 0 || src_h <= 0) {
+        return 0.0;
+    }
     // clamp coordinates to [0, w-1] x [0, h-1]
-    if (x < 0.0) x = 0.0; if (x > src_w - 1) x = src_w - 1;
-    if (y < 0.0) y = 0.0; if (y > src_h - 1) y = src_h - 1;
+    if (x < 0.0) {
+        x = 0.0;
+    }
+    if (x > src_w - 1) {
+        x = src_w - 1;
+    }
+    if (y < 0.0) {
+        y = 0.0;
+    }
+    if (y > src_h - 1) {
+        y = src_h - 1;
+    }
 
     int x0 = (int)std::floor(x);
     int x1 = x0 + 1;
     int y0 = (int)std::floor(y);
     int y1 = y0 + 1;
 
-    if (x1 >= src_w) x1 = src_w - 1;
-    if (y1 >= src_h) y1 = src_h - 1;
+    if (x1 >= src_w) {
+        x1 = src_w - 1;
+    }
+    if (y1 >= src_h) {
+        y1 = src_h - 1;
+    }
 
     double dx = x - x0;
     double dy = y - y0;
@@ -39,7 +61,9 @@ static double bilinear_sample(const double* src, int src_w, int src_h, double x,
     return v;
 }
 void CanvasConverter::ResampleGrid(const double* src, int src_w, int src_h, double* dst, int dst_w, int dst_h) {
-    if (!src || !dst || src_w <= 0 || src_h <= 0 || dst_w <= 0 || dst_h <= 0) return;
+    if (!src || !dst || src_w <= 0 || src_h <= 0 || dst_w <= 0 || dst_h <= 0) {
+        return;
+    }
     double scale_x = static_cast<double>(src_w) / static_cast<double>(dst_w);
     double scale_y = static_cast<double>(src_h) / static_cast<double>(dst_h);
     for (int y = 0; y < dst_h; ++y) {
@@ -53,11 +77,17 @@ void CanvasConverter::ResampleGrid(const double* src, int src_w, int src_h, doub
 }
 
 DataPoint* CanvasConverter::GridToDataPoint(const double* grid, int grid_w, int grid_h, int label, int num_labels, int target_w, int target_h) {
-    if (grid == nullptr) return nullptr;
+    if (grid == nullptr) {
+        return nullptr;
+    }
 
     // If no target specified, use constants
-    if (target_w <= 0) target_w = CONSTANTS_H::DESTX;
-    if (target_h <= 0) target_h = CONSTANTS_H::DESTY;
+    if (target_w <= 0) {
+        target_w = CONSTANTS_H::DESTX;
+    }
+    if (target_h <= 0) {
+        target_h = CONSTANTS_H::DESTY;
+    }
 
     int out_w = target_w;
     int out_h = target_h;

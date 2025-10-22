@@ -144,8 +144,9 @@ private:
             double y = y_true[i];
 
             // avoid division by zero for edge values
-            if (x == 0.0 || x == 1.0)
+            if (x == 0.0 || x == 1.0) {
                 continue;
+            }
 
             double expected = (x - y) / (x * (1 - x));
             double actual = func->Der(x, y);

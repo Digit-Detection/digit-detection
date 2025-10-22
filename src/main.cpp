@@ -48,7 +48,7 @@ bool MainApp::OnInit() {
     std::cout << "====================== Loading Training Data ======================" << std::endl;
     network_trainer.LoadData();
     std::cout << "====================== Training Network ======================" << std::endl;
-    network_trainer.StartTrainingSession(3); // AMOUNT TRAINED
+    network_trainer.StartTrainingSession(1); // Amount trained. Change this when testing program.
 
     delete[] layer_sizes;
     delete settings;

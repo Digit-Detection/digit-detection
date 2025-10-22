@@ -3,7 +3,7 @@
 #include <iostream>
 
 void LoadNetwork::Save(std::ostream& file) const {
-    //Fixed size members
+    // Fixed size members
     file.write(reinterpret_cast<const char*>(&this->layers_length), sizeof(int));
     
     // Dynamically allocated members
@@ -42,13 +42,17 @@ void LoadNetwork::Load(std::istream& file) {
 
 void LoadNetwork::Save(const LoadNetwork& data, const std::string& filename) {
     std::ofstream file(filename, std::ios::binary | std::ios::trunc);
-    if (!file) throw std::runtime_error("Failed to open file for writing");
+    if (!file) {
+        throw std::runtime_error("Failed to open file for writing");
+    }
     data.Save(file);
 }
 
 LoadNetwork* LoadNetwork::Load(const std::string& filename) {
     std::ifstream file(filename, std::ios::binary);
-    if (!file) throw std::runtime_error("Failed to open file for reading");
+    if (!file) {
+        throw std::runtime_error("Failed to open file for reading");
+    }
     LoadNetwork* network = new LoadNetwork;
     network->Load(file);
     return network;

@@ -2,7 +2,11 @@
 #include <fstream>
 #include <iostream>
 
-// Stream Based
+// Stream-based serialization
+// Note that the stream functions operate on already-open std::istream/std::ostream
+// and perform raw binary reads/writes. They do not throw on I/O errors
+// (callers should check the stream state if they need robust error handling).
+// Load allocates memory for weights/biases; the LoadLayer destructor frees them.
 void LoadLayer::Save(std::ostream& file) const {
     //Fixed size members
     file.write(reinterpret_cast<const char*>(&this->num_input_nodes), sizeof(int));
@@ -49,17 +53,25 @@ void LoadLayer::Load(std::istream& file) {
 }
 
 
-// File Based
+// Convenience file-based wrappers.
+// These helpers open a binary file and then delegate to the stream-based
+// Save/Load functions defined above. They throw a runtime_error if the
+// file cannot be opened. The file format written/expected is described
+// in the stream-based serialization comment above :).
 void LoadLayer::Save(const LoadLayer& data, const std::string& filename) {
     std::ofstream file(filename, std::ios::binary | std::ios::out);
-    if (!file) throw std::runtime_error("Failed to open file for writing");
+    if (!file) {
+        throw std::runtime_error("Failed to open file for writing");
+    }
     data.Save(file);
 }
 
 
 LoadLayer* LoadLayer::Load(const std::string& filename) {
     std::ifstream file(filename, std::ios::binary | std::ios::in);
-    if (!file) throw std::runtime_error("Failed to open file for reading");
+    if (!file) {
+        throw std::runtime_error("Failed to open file for reading");
+    }
     LoadLayer* layer = new LoadLayer;
     layer->Load(file);
     return layer;

@@ -15,8 +15,12 @@ static int read_be_int(const unsigned char* buf) {
 std::pair<DataPoint**, int> MnistLoader::LoadFromGzFiles(const std::string& images_gz_path, const std::string& labels_gz_path, int num_labels) {
     bool images_gz = false;
     bool labels_gz = false;
-    if (images_gz_path.size() > 3 && images_gz_path.substr(images_gz_path.size()-3) == ".gz") images_gz = true;
-    if (labels_gz_path.size() > 3 && labels_gz_path.substr(labels_gz_path.size()-3) == ".gz") labels_gz = true;
+    if (images_gz_path.size() > 3 && images_gz_path.substr(images_gz_path.size()-3) == ".gz") {
+        images_gz = true;
+    }
+    if (labels_gz_path.size() > 3 && labels_gz_path.substr(labels_gz_path.size()-3) == ".gz") {
+        labels_gz = true;
+    }
 
     // We'll provide two read paths: gzipped via zlib, or plain ifstream.
     unsigned char header[16];
@@ -142,7 +146,9 @@ std::pair<DataPoint**, int> MnistLoader::LoadFromGzFiles(const std::string& imag
     }
 
     int m = (int)items.size();
-    if (m == 0) return std::make_pair((DataPoint**)nullptr, 0);
+    if (m == 0) {
+        return std::make_pair((DataPoint**)nullptr, 0);
+    }
     DataPoint** arr = new DataPoint*[m];
     for (int i = 0; i < m; ++i) arr[i] = items[i];
     return std::make_pair(arr, m);
@@ -150,7 +156,9 @@ std::pair<DataPoint**, int> MnistLoader::LoadFromGzFiles(const std::string& imag
 
 bool MnistLoader::ConvertToBin(const std::string& images_path, const std::string& labels_path, const std::string& out_bin_path, int num_labels) {
     auto res = MnistLoader::LoadFromGzFiles(images_path, labels_path, num_labels);
-    if (res.second == 0 || res.first == nullptr) return false;
+    if (res.second == 0 || res.first == nullptr) {
+        return false;
+    }
     // Save to .bin format using DataSet
     try {
         DataSet::SaveDataPoints(res.first, res.second, out_bin_path);

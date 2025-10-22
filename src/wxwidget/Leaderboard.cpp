@@ -33,7 +33,9 @@ void Leaderboard::UpdateLeaderboard(double* probability) {
         payload[i] = {i, probability[i]};
     }
     sort(payload.begin(), payload.end(), [&](const std::pair<int, double>& a, const std::pair<int, double>& b) {
-        if (this->truncate_double(a.second, 6) == this->truncate_double(b.second, 6)) return a.first < b.first; // decreasing by value
+        if (this->truncate_double(a.second, 6) == this->truncate_double(b.second, 6)) {
+            return a.first < b.first; // decreasing by value
+        }
         return a.second > b.second; // decreasing by probability
     });
     

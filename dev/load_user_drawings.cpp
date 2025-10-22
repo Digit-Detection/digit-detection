@@ -7,14 +7,18 @@
 
 int main(int argc, char** argv) {
     std::string path = "data/user_drawings.bin";
-    if (argc > 1) path = argv[1];
+    if (argc > 1) {
+        path = argv[1];
+    }
 
     auto res = DataSet::LoadDataPoints(path);
     DataPoint** arr = res.first;
     int count = res.second;
 
     std::cout << "Loaded " << count << " datapoints from '" << path << "'\n";
-    if (count == 0) return 0;
+    if (count == 0) {
+        return 0;
+    }
 
     std::cout << "Labels: ";
     int to_show = std::min(count, 10);
