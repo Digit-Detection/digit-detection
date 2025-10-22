@@ -1,12 +1,11 @@
-# Ignore build output (ignores all _.out files)
+# Ignore build outputs
 *.out
 build/
 *.exe
 
 # Ignore editor files
 .vscode/
-*.swp
 
-# Ignore large files
+# Ignore large data files
 mnist.bin
 dataset.bin
