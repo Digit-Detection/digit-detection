@@ -12,16 +12,16 @@ class EvaluationData {
         int num_labels;
     public:
         EvaluationData(int num_labels);
-        int get_num_correct();
-        void increment_num_correct();
-        int get_total();
-        void set_total(int total);
-        int* get_num_correct_per_label();
-        int* get_total_per_label();
-        int* get_falsely_labelled();
-        void increment_num_correct_per_label(int index);
-        void increment_total_per_label(int index);
-        void increment_falsely_labelled(int index);
+        int getNumCorrect();
+        void incrementNumCorrect();
+        int getTotal();
+        void setTotal(int total);
+        int* getNumCorrectPerLabel();
+        int* getTotalPerLabel();
+        int* getFalselyLabelled();
+        void incrementNumCorrectPerLabel(int index);
+        void incrementTotalPerLabel(int index);
+        void incrementFalselyLabelled(int index);
         ~EvaluationData();
 };
 

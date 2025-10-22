@@ -5,7 +5,7 @@ Batch::Batch(DataPoint** data, int data_length) {
     this->data_length = data_length;
 }
 
-DataPoint** Batch::get_data() {
+DataPoint** Batch::getData() {
     return this->data;
 }
 

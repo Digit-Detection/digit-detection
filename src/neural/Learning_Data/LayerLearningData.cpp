@@ -9,48 +9,48 @@ LayerLearningData::LayerLearningData() {
 }
 
 LayerLearningData::LayerLearningData(Layer* layer) {
-    this->size = layer->get_num_output_nodes();
+    this->size = layer->getNumOutputNodes();
     this->weighted_inputs = new double[this->size];
     this->activations = new double[this->size];
     this->node_values = new double[this->size];
 }
 
-void LayerLearningData::set_inputs(double* inputs) {
+void LayerLearningData::setInputs(double* inputs) {
     this->inputs = inputs;
 }
 
-void LayerLearningData::set_weighted_inputs(int index, double value) {
+void LayerLearningData::setWeightedInputs(int index, double value) {
     this->weighted_inputs[index] = value;
 }
 
-double* LayerLearningData::get_weighted_inputs() {
+double* LayerLearningData::getWeightedInputs() {
     return this->weighted_inputs;
 }
 
-int LayerLearningData::get_size() {
+int LayerLearningData::getSize() {
     return this->size;
 }
 
-void LayerLearningData::set_activations(int index, double value) {
+void LayerLearningData::setActivations(int index, double value) {
     this->activations[index] = value;
 }
 
-double* LayerLearningData::get_activations() {
+double* LayerLearningData::getActivations() {
     return this->activations;
 }
 
-void LayerLearningData::set_node_values(int index, double value) {
+void LayerLearningData::setNodeValues(int index, double value) {
     this->node_values[index] = value;
 }
-double* LayerLearningData::get_node_values() {
+double* LayerLearningData::getNodeValues() {
     return this->node_values;
 }
 
-double LayerLearningData::get_node_values(int index) {
+double LayerLearningData::getNodeValues(int index) {
     return this->node_values[index];
 }
 
-double LayerLearningData::get_inputs(int index) {
+double LayerLearningData::getInputs(int index) {
     return this->inputs[index];
 }
 

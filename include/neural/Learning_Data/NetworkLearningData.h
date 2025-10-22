@@ -8,7 +8,7 @@ class NetworkLearningData {
         int layer_data_size;
     public:
         NetworkLearningData(Layer** layer, int num_layers);
-        LayerLearningData* get_layer_data(int index);
+        LayerLearningData* getLayerData(int index);
         ~NetworkLearningData();
 };
 

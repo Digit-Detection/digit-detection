@@ -22,18 +22,18 @@ class NetworkSettings {
     
     public:
         NetworkSettings();
-        void set_layer_sizes(int* layer_sizes);
-        void set_num_layers(int num_layers);
-        int* get_layer_sizes();
-        int get_num_layers();
-        Activations* get_activation_type();
-        Activations* get_output_activation_type();
-        Costs* get_cost_type();
-        double get_initial_learning_rate();
-        double get_learn_rate_decay();
-        int get_mini_batch_size();
-        double get_momentum();
-        double get_regularisation();
+        void setLayerSizes(int* layer_sizes);
+        void setNumLayers(int num_layers);
+        int* getLayerSizes();
+        int getNumLayers();
+        Activations* getActivationType();
+        Activations* getOutputActivationType();
+        Costs* getCostType();
+        double getInitialLearningRate();
+        double getLearnRateDecay();
+        int getMiniBatchSize();
+        double getMomentum();
+        double getRegularisation();
         ~NetworkSettings();
 };
 

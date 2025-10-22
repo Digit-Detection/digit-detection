@@ -8,7 +8,7 @@ class Batch {
         int data_length;
     public:
         Batch(DataPoint** data, int data_length);
-        DataPoint** get_data();
+        DataPoint** getData();
         ~Batch();
 };
 

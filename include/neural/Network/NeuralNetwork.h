@@ -22,21 +22,21 @@ class NeuralNetwork {
         NeuralNetwork(LoadNetwork* network_params);
 
         // Saving network function
-        LoadNetwork* get_network_data();
+        LoadNetwork* getNetworkData();
 
         // Neural Network Output
         std::pair<int, double*> Run(double* inputs);
-        int max_value_index(double* values);
+        int maxValueIndex(double* values);
         double* CalculateOutputs(double* inputs);
 
         // Learning
         void Learn(DataPoint** training_data, int training_data_length, double learn_rate, double regularisation = 0.0, double momentum = 0.0);
-        void update_gradients(DataPoint* data, NetworkLearningData* learn_data);
+        void updateGradients(DataPoint* data, NetworkLearningData* learn_data);
 
         // Setting functions
         void set_cost_function(Costs* cost_function);
-        void set_activation_function(Activations* activation);
-        void set_activation_function(Activations* activation, Activations* output_layer_activation);
+        void setActivationFunction(Activations* activation);
+        void setActivationFunction(Activations* activation, Activations* output_layer_activation);
 
         ~NeuralNetwork();
 };

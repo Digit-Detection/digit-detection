@@ -8,7 +8,7 @@ NetworkLearningData::NetworkLearningData(Layer** layer, int num_layers) {
     }
 }
 
-LayerLearningData* NetworkLearningData::get_layer_data(int index) {
+LayerLearningData* NetworkLearningData::getLayerData(int index) {
     return this->layer_data[index];
 }
 
