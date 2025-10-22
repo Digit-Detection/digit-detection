@@ -9,7 +9,9 @@ namespace Augmentations {
 // Helper: bilinear sample with pad-to-zero outside
 static inline double sample_bilinear_pad(const double* src, int w, int h, double x, double y) {
     // If completely outside, return 0
-    if (x < 0.0 || y < 0.0 || x > w - 1 || y > h - 1) return 0.0;
+    if (x < 0.0 || y < 0.0 || x > w - 1 || y > h - 1) {
+        return 0.0;
+    }
     int x0 = (int)std::floor(x);
     int y0 = (int)std::floor(y);
     int x1 = x0 + 1;
@@ -17,7 +19,9 @@ static inline double sample_bilinear_pad(const double* src, int w, int h, double
     double dx = x - x0;
     double dy = y - y0;
     auto v = [&](int yy, int xx)->double{
-        if (xx < 0 || xx >= w || yy < 0 || yy >= h) return 0.0;
+        if (xx < 0 || xx >= w || yy < 0 || yy >= h) {
+            return 0.0;
+        }
         return src[yy * w + xx];
     };
     double v00 = v(y0, x0);
@@ -27,12 +31,20 @@ static inline double sample_bilinear_pad(const double* src, int w, int h, double
     double v0 = v00 * (1 - dx) + v10 * dx;
     double v1 = v01 * (1 - dx) + v11 * dx;
     double val = v0 * (1 - dy) + v1 * dy;
-    if (val < 0.0) val = 0.0; if (val > 1.0) val = 1.0;
+    if (val < 0.0) {
+        val = 0.0;
+    }
+    if (val > 1.0) {
+        val = 1.0;
+    }
     return val;
 }
 
+// 1st augmentation method: scaling. Quantitised through scale factors.
 void Scale(const double* src, int src_w, int src_h, double* dst, int dst_w, int dst_h, double factor) {
-    if (!src || !dst) return;
+    if (!src || !dst) {
+        return;
+    }
     double cx = (dst_w - 1) / 2.0;
     double cy = (dst_h - 1) / 2.0;
     for (int y = 0; y < dst_h; ++y) {
@@ -45,8 +57,11 @@ void Scale(const double* src, int src_w, int src_h, double* dst, int dst_w, int 
     }
 }
 
+// 2nd augmentation method: rotation. Quantitised by no. of degrees.
 void Rotate(const double* src, int src_w, int src_h, double* dst, int dst_w, int dst_h, double degrees_clockwise) {
-    if (!src || !dst) return;
+    if (!src || !dst) {
+        return;
+    }
     double cx = (dst_w - 1) / 2.0;
     double cy = (dst_h - 1) / 2.0;
     double theta = degrees_clockwise * M_PI / 180.0; // clockwise angle
@@ -64,13 +79,18 @@ void Rotate(const double* src, int src_w, int src_h, double* dst, int dst_w, int
     }
 }
 
+// 3rd augmentation method: salt'n pepper noise. Quantitised through percentage.
 void ApplySaltAndPepper(const double* src, int src_w, int src_h, double* dst, int dst_w, int dst_h, double noise_fraction) {
-    if (!src || !dst) return;
+    if (!src || !dst) {
+        return;
+    }
     // copy
     int n = dst_w * dst_h;
     for (int i = 0; i < n; ++i) dst[i] = src[i];
 
-    if (noise_fraction <= 0.0) return;
+    if (noise_fraction <= 0.0) {
+        return;
+    }
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> dis(0.0, 1.0);
@@ -87,15 +107,21 @@ void ApplySaltAndPepper(const double* src, int src_w, int src_h, double* dst, in
 
 std::vector<DataPoint*> GenerateAugmentedDataPoints(const double* src, int src_w, int src_h, int label, int num_labels) {
     std::vector<DataPoint*> out;
-    if (!src) return out;
+    if (!src) {
+        return out;
+    }
 
-    // prepare buffers
+    // preparing buffers aka temporary copies of data whilst augmentations are being applied.
     int w = src_w; int h = src_h;
     int n = w * h;
     double* buf_scaled = new double[n];
     double* buf_rot = new double[n];
     double* buf_noisy = new double[n];
 
+
+    // The below structure ensures that all possible combinations of augmentation methods to be applied,
+    // allowing for a lot of versions / drawing. This is especially helpful to generate tonnes of data 
+    // for the machine to learn with in a short time.
 
     // 1. No augmentation (original)
     {

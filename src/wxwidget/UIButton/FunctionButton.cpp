@@ -22,6 +22,8 @@ void FunctionButton::BindEvents() {
 void FunctionButton::OnClick(wxCommandEvent& event) {
     // Default behavior (can be overridden)
     // std::cout << "Button Clicked!" << std::endl;
-    if (this->functionBehaviour) this->functionBehaviour();
+    if (this->functionBehaviour) {
+        this->functionBehaviour();
+    }
 }
 

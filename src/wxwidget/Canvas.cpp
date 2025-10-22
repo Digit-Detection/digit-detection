@@ -68,7 +68,9 @@ void Canvas::OnMouseDown(wxMouseEvent& evt) {
     drawing = true;
     int x = evt.GetX() / CONSTANTS_H::CANSCALE;
     int y = evt.GetY() / CONSTANTS_H::CANSCALE;
-    if (grid[y * CONSTANTS_H::CANX + x] == 0) this->lastDrew = true;
+    if (grid[y * CONSTANTS_H::CANX + x] == 0) {
+        this->lastDrew = true;
+    }
     this->DrawGrid(y, x);
     Refresh();
 }
@@ -85,7 +87,8 @@ void Canvas::OnMouseUp(wxMouseEvent& evt) {
     lastX = -1;
     lastY = -1;
     StoreState();
-    // Resample and call update with the resampled buffer
+    // Resample the high-resolution canvas into the ML input resolution and
+    // notify the leaderboard/predictor with the latest resample.
     UpdateResampled();
     this->updateLeaderboard(this->resampledGrid);
 }
@@ -105,32 +108,42 @@ void Canvas::OnMouseMove(wxMouseEvent& evt) {
             int cx = lastX, cy = lastY;
             while (true) {
                 if (MouseRange(cy, cx)) {
-                    if (grid[cy * CONSTANTS_H::CANX + cx] == 0) this->lastDrew = true;
+                    if (grid[cy * CONSTANTS_H::CANX + cx] == 0) {
+                        this->lastDrew = true;
+                    }
                     this->DrawGrid(cy, cx);
                 }
 
-                if (cx == x && cy == y) break;
+                if (cx == x && cy == y) {
+                    break;
+                }
 
                 int e2 = 2 * err;
-                if (e2 > -dy) { err -= dy; cx += sx; }
-                if (e2 < dx) { err += dx; cy += sy; }
+                if (e2 > -dy) {
+                    err -= dy; cx += sx;
+                }
+                if (e2 < dx) {
+                    err += dx; cy += sy;
+                }
             }
 
         } else {
             if (MouseRange(y, x)) {
-                if (grid[y * CONSTANTS_H::CANX + x] == 0) this->lastDrew = true;
+                if (grid[y * CONSTANTS_H::CANX + x] == 0) {
+                    this->lastDrew = true;
+                }
                 this->DrawGrid(y, x);
             }
-
         }
 
         lastX = x;
         lastY = y;
         // Update Frame
         Refresh();
-        // For real-time updates, resample and send latest preview
-        UpdateResampled();
-        this->updateLeaderboard(this->resampledGrid);
+    // For real-time feedback, continuously resample the canvas to the
+    // ML input resolution and send the preview to the leaderboard/predictor.
+    UpdateResampled();
+    this->updateLeaderboard(this->resampledGrid);
     }
 }
 
@@ -151,9 +164,14 @@ void Canvas::OnPaint(wxPaintEvent& evt) {
 }   
 
 void Canvas::StoreState() {
-    if (this->lastDrew) {
+        if (this->lastDrew) {
+        // If the user modified the canvas since the last stored state,
+        // push a copy into the undo history. Keep the history bounded to
+        // the most recent 15 states to limit memory use.
         this->lastDrew = false;
-        if (drawingHistory.size() >= 15) drawingHistory.pop_back(); // Keeps up to 15 states
+        if (drawingHistory.size() >= 15) {
+            drawingHistory.pop_back();
+        }
         double* copy = new double[CONSTANTS_H::CANY * CONSTANTS_H::CANX];
         for (int i = 0; i < CONSTANTS_H::CANY * CONSTANTS_H::CANX; i++) {
             copy[i] = grid[i];
@@ -201,7 +219,9 @@ void Canvas::DrawGrid(const int& y, const int& x) {
             int px = x + dx;
             int py = y + dy;
             if (MouseRange(py, px)) {
-                if (grid[py * CONSTANTS_H::CANX + px] == 0) this->lastDrew = true;
+                if (grid[py * CONSTANTS_H::CANX + px] == 0) {
+                    this->lastDrew = true;
+                }
                 grid[py * CONSTANTS_H::CANX + px] = 1;
             }
         }
@@ -218,7 +238,9 @@ void Canvas::UpdateResampled() {
 
 bool Canvas::is_empty() {
     for (int i = 0; i < CONSTANTS_H::CANY * CONSTANTS_H::CANX; i++) {
-        if (grid[i]) return false;
+        if (grid[i]) {
+            return false;
+        }
     }
     return true;
 }
@@ -239,7 +261,9 @@ int Canvas::get_brushSize() {
 }
 
 void Canvas::set_brushSize(int newSize) {
-    if (newSize <= 0) return;
+    if (newSize <= 0) {
+        return;
+    }
     this->brushSize = newSize;
 }
 

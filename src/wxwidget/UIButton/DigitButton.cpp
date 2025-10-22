@@ -5,13 +5,6 @@
 #include "neural/Data_Handling/CanvasConverter.h"
 #include "neural/Data_Handling/Augmentations.h"
 #include "wxwidget/developer/ShowDrawing.h"
-/* 
-public:
-    static Canvas* canvasParent;
-protected:
-    int submitValue;
-    void OnClick(wxCommandEvent& event);
-*/
 
 Canvas* DigitButton::canvasParent = nullptr;
 
@@ -48,6 +41,8 @@ void DigitButton::OnClick(wxCommandEvent& event) {
         if (resampled) {
             try {
                 DataPoint* dp = new DataPoint(resampled, CONSTANTS_H::DESTX * CONSTANTS_H::DESTY, this->submitValue, CONSTANTS_H::NUMDIGITS);
+                // Append this single resized drawing to data/user_drawings.bin.
+                // DataSet::AppendDataPoint uses std::ios::app and will create the file if it doesn't exist yet.
                 DataSet::AppendDataPoint(dp, "data/user_drawings.bin");
                 std::cout << "Saved drawing as label " << this->submitValue << " to data/user_drawings.bin" << std::endl;
                 delete dp;

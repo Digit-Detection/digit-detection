@@ -99,8 +99,10 @@ void NetworkTrainer::LoadData() {
     // If no data was previously injected, try loading mnist.bin (convert from IDX if needed)
 
     if (this->all_data == nullptr || this->all_data_length == 0) {
-        // Check for data/dataset.bin first
-        const std::string dataset_path = "data/dataset.bin";
+    // Check for data/dataset.bin first. If it exists we'll load it directly.
+    // If it does not exist, we will load `data/user_drawings.bin` (if present),
+    // generate augmentations and call DataSet::SaveDataPoints(...) to create `data/dataset.bin`.
+    const std::string dataset_path = "data/dataset.bin";
         std::ifstream f_dataset(dataset_path, std::ios::binary);
         if (f_dataset) {
             f_dataset.close();
@@ -139,6 +141,7 @@ void NetworkTrainer::LoadData() {
                     all_augmented.insert(all_augmented.end(), aug.begin(), aug.end());
                 }
                 std::cout << "Saving augmented dataset to " << dataset_path << " (" << all_augmented.size() << " datapoints)...\n";
+                // SaveDataPoints opens the file with truncation and will create `data/dataset.bin` and its parent directories if needed.
                 DataSet::SaveDataPoints(all_augmented.data(), all_augmented.size(), dataset_path);
                 // Clean up user_arr
                 for (int i = 0; i < user_n; ++i) delete user_arr[i];
@@ -180,5 +183,7 @@ void NetworkTrainer::_set_data(DataPoint** data, int data_length) {
 }
 
 NetworkTrainer::~NetworkTrainer() {
-    if (this->defaultConstructed) delete this->network_settings;
+    if (this->defaultConstructed) {
+        delete this->network_settings;
+    }
 }

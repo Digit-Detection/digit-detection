@@ -16,7 +16,8 @@ double NetworkData::get_accuracy() const {
 NeuralNetwork* NetworkData::LoadNetworkFromSaved() {
     //Loads network from saved data
     std::ifstream file(filename, std::ios::binary);
-    if (!file.is_open()) { 
+    // If the file is missing or cannot be opened, return nullptr and callers should handle missing network.
+    if (!file.is_open()) {
         std::cerr << "Could not open " << filename << std::endl;
         return nullptr;
     }
@@ -43,6 +44,7 @@ void NetworkData::SaveNetworkToSaved(NeuralNetwork* network, double new_accuracy
     }
 
     std::ofstream file(filename, std::ios::binary | std::ios::trunc);
+    // Open the network data file for writing (truncate). This will create the file if it does not exist.
     if (!file) {
         std::cerr << "Could not open " << filename << " for writing" << std::endl;
         return;
