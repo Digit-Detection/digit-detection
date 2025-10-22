@@ -40,8 +40,8 @@ bool MainApp::OnInit() {
     layer_sizes[3] = 10;   // output layer (two classes)
 
     // Configure Settings
-    settings->set_layer_sizes(layer_sizes);
-    settings->set_num_layers(num_layers);
+    settings->setLayerSizes(layer_sizes);
+    settings->setNumLayers(num_layers);
     NetworkTrainer network_trainer(settings); // Create trainer
 
     // Train Network

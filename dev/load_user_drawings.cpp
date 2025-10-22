@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
     // Dump first datapoint to PGM if inputs_length == 28*28
     DataPoint* first = arr[0];
     int ins = first->get_inputs_length();
-    double* inputs = first->get_inputs();
+    double* inputs = first->getInputs();
     if (ins == 28*28) {
         std::ofstream out("dev/first_dump.pgm", std::ios::binary);
         if (!out) {

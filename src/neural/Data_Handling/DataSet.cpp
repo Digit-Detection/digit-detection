@@ -20,14 +20,14 @@ void DataSet::SaveDataPoints(DataPoint** data, int data_length, const std::strin
     }
     for (int i = 0; i < data_length; ++i) {
         DataPoint* dp = data[i];
-        int inputs_len = dp->get_inputs_length();
-        int label = dp->get_label();
-        int num_labels = dp->get_expected_outputs_length();
+        int inputs_len = dp->getInputsLength();
+        int label = dp->getLabel();
+        int num_labels = dp->getExpectedOutputsLength();
 
         file.write(reinterpret_cast<const char*>(&inputs_len), sizeof(int));
         file.write(reinterpret_cast<const char*>(&label), sizeof(int));
         file.write(reinterpret_cast<const char*>(&num_labels), sizeof(int));
-        double* inputs = dp->get_inputs();
+        double* inputs = dp->getInputs();
         if (inputs_len > 0) {
             file.write(reinterpret_cast<const char*>(inputs), sizeof(double) * inputs_len);
         }
@@ -47,13 +47,13 @@ void DataSet::AppendDataPoint(DataPoint* dp, const std::string& filename) {
     if (!file) {
         throw std::runtime_error("Failed to open dataset file for appending");
     }
-    int inputs_len = dp->get_inputs_length();
-    int label = dp->get_label();
-    int num_labels = dp->get_expected_outputs_length();
+    int inputs_len = dp->getInputsLength();
+    int label = dp->getLabel();
+    int num_labels = dp->getExpectedOutputsLength();
     file.write(reinterpret_cast<const char*>(&inputs_len), sizeof(int));
     file.write(reinterpret_cast<const char*>(&label), sizeof(int));
     file.write(reinterpret_cast<const char*>(&num_labels), sizeof(int));
-    double* inputs = dp->get_inputs();
+    double* inputs = dp->getInputs();
     if (inputs_len > 0) {
         file.write(reinterpret_cast<const char*>(inputs), sizeof(double) * inputs_len);
     }

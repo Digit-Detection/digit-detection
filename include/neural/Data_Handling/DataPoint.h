@@ -10,11 +10,11 @@ class DataPoint {
         int label;
     public:
         DataPoint(double* inputs, int inputs_length, int label, int num_labels);
-        double* get_inputs();
-        int get_inputs_length();
-        int get_label();
-        double* get_expected_outputs();
-        int get_expected_outputs_length();
+        double* getInputs();
+        int getInputsLength();
+        int getLabel();
+        double* getExpectedOutputs();
+        int getExpectedOutputsLength();
         double* CreateOneHot(int index, int num);
         ~DataPoint();
 };

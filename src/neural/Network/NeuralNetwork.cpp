@@ -44,7 +44,7 @@ NeuralNetwork::NeuralNetwork(LoadNetwork* network_params) {
     this->batch_learn_data_length = 0;
 }
 
-LoadNetwork* NeuralNetwork::get_network_data() {
+LoadNetwork* NeuralNetwork::getNetworkData() {
     // Deep copy everything
     LoadNetwork* network_params = new LoadNetwork();
     network_params->layer_sizes = new int[this->layers_length + 1];
@@ -54,7 +54,7 @@ LoadNetwork* NeuralNetwork::get_network_data() {
     network_params->layers_length = this->layers_length;
     network_params->layers = new LoadLayer*[this->layers_length];
     for (int i = 0; i < this->layers_length; i++) {
-        network_params->layers[i] = this->layers[i]->get_layer_data();
+        network_params->layers[i] = this->layers[i]->getLayerData();
     }
 
     network_params->cost = new CallCost(this->cost->get_activation()->GetType());
@@ -66,11 +66,11 @@ LoadNetwork* NeuralNetwork::get_network_data() {
         
 std::pair<int, double*> NeuralNetwork::Run(double* inputs) {
     double* outputs = this->CalculateOutputs(inputs);
-    int neural_network_output = this->max_value_index(outputs);
+    int neural_network_output = this->maxValueIndex(outputs);
     return std::make_pair(neural_network_output, outputs);
 }
         
-int NeuralNetwork::max_value_index(double* values) {
+int NeuralNetwork::maxValueIndex(double* values) {
     double max_value = std::numeric_limits<double>::lowest();
     int index = 0;
     for (int i = 0; i < this->output_layer_size; i++) {
@@ -109,7 +109,7 @@ void NeuralNetwork::Learn(DataPoint** training_data, int training_data_length, d
     }
 
     for (int i = 0; i < training_data_length; i++) {
-        this->update_gradients(training_data[i], batch_learn_data[i]);
+        this->updateGradients(training_data[i], batch_learn_data[i]);
     }
 
     for (int i = 0; i < this->layers_length; i++) {
@@ -117,13 +117,13 @@ void NeuralNetwork::Learn(DataPoint** training_data, int training_data_length, d
     }
 }
 
-void NeuralNetwork::update_gradients(DataPoint* data, NetworkLearningData* learn_data) {
+void NeuralNetwork::updateGradients(DataPoint* data, NetworkLearningData* learn_data) {
     //Generate outputs from data, saving all inputs, weighted_inputs and activations for backpropagation
-    double* inputs_next_layer = data->get_inputs();
-    int length = data->get_inputs_length();
+    double* inputs_next_layer = data->getInputs();
+    int length = data->getInputsLength();
 
     for (int i = 0; i < this->layers_length; i++) {
-        std::pair<double*, int> result = this->layers[i]->Output(inputs_next_layer, length, learn_data->get_layer_data(i));
+        std::pair<double*, int> result = this->layers[i]->Output(inputs_next_layer, length, learn_data->getLayerData(i));
         inputs_next_layer = result.first;
         length = result.second;
     }
@@ -131,19 +131,19 @@ void NeuralNetwork::update_gradients(DataPoint* data, NetworkLearningData* learn
     //Backpropagation
     int output_layer_idx = this->layers_length - 1;
     Layer* output_layer = this->layers[output_layer_idx];
-    LayerLearningData* output_learn_data = learn_data->get_layer_data(output_layer_idx);
+    LayerLearningData* output_learn_data = learn_data->getLayerData(output_layer_idx);
 
     //Update output layer gradients
-    output_layer->OutputLayerNodeValues(output_learn_data, data->get_expected_outputs(), this->cost->get_activation());
+    output_layer->OutputLayerNodeValues(output_learn_data, data->getExpectedOutputs(), this->cost->get_activation());
     output_layer->UpdateGradients(output_learn_data);
 
     //Update all hidden layer gradients
     for (int i = output_layer_idx - 1; i >= 0; i--) {
-        LayerLearningData* layer_learn_data = learn_data->get_layer_data(i);
+        LayerLearningData* layer_learn_data = learn_data->getLayerData(i);
         Layer* hidden_layer = this->layers[i];
 
         hidden_layer->HiddenLayerNodeValues(layer_learn_data, this->layers[i + 1], 
-            learn_data->get_layer_data(i + 1)->get_node_values(), learn_data->get_layer_data(i + 1)->get_size());
+            learn_data->getLayerData(i + 1)->getNodeValues(), learn_data->getLayerData(i + 1)->getSize());
         hidden_layer->UpdateGradients(layer_learn_data);
     }
 }
@@ -154,15 +154,15 @@ void NeuralNetwork::set_cost_function(Costs* cost_function) {
     this->cost = new CallCost(cost_function->GetType());
 }
         
-void NeuralNetwork::set_activation_function(Activations* activation) {
-    this->set_activation_function(activation, activation);
+void NeuralNetwork::setActivationFunction(Activations* activation) {
+    this->setActivationFunction(activation, activation);
 }
         
-void NeuralNetwork::set_activation_function(Activations* activation, Activations* output_layer_activation) {
+void NeuralNetwork::setActivationFunction(Activations* activation, Activations* output_layer_activation) {
     for (int i = 0; i < this->layers_length - 1; i++) {
-        this->layers[i]->set_activation(activation);
+        this->layers[i]->setActivation(activation);
     }
-    this->layers[this->layers_length - 1]->set_activation(output_layer_activation);
+    this->layers[this->layers_length - 1]->setActivation(output_layer_activation);
 }
 
 NeuralNetwork::~NeuralNetwork() {
