@@ -58,8 +58,8 @@ NetworkTrainer::NetworkTrainer(NetworkSettings* settings) {
 void NetworkTrainer::StartTrainingSession(int num_epochs) {
     // Start a training session that runs for "num_epochs" epochs.
     // Basically, it:
-    //  1) Ensure training data is loaded (calls LoadData() if needed).
-    //  2) Instantiate a NeuralNetwork configured from NetworkSettings.
+    //  1) Instantiate a NeuralNetwork configured from NetworkSettings.
+    //  2) Ensure training data is loaded (calls LoadData() if needed).
     //  3) For each epoch: iterate the mini-batches and invoke Learn(...) to
     //     update the model parameters.
     //  4) After each epoch: evaluate on training and validation sets, print
@@ -67,21 +67,26 @@ void NetworkTrainer::StartTrainingSession(int num_epochs) {
     //  5) At the end of training: evaluate and save the trained network if
     //     it improves on the stored checkpoint.
 
-    // Ensure training data is available before starting.
-    if (!this->data_loaded) {
-        this->LoadData();
-        // If LoadData failed to find/trainable data it will leave data_loaded == false.
-        if (!this->data_loaded) {
-            std::cerr << "Training aborted: no training data available." << std::endl;
-            return;
-        }
-    }
 
     // Initialize the neural network from settings.
     // NeuralNetwork takes ownership of the layer size array internally.
     NeuralNetwork* neural_network = new NeuralNetwork(this->network_settings->getLayerSizes(), this->network_settings->getNumLayers());
     neural_network->setActivationFunction(this->network_settings->getActivationType(), this->network_settings->getOutputActivationType());
     neural_network->set_cost_function(this->network_settings->getCostType());
+
+    // Ensure training data is available before starting.
+    if (!this->data_loaded) {
+        this->LoadData();
+        // If LoadData failed to find/trainable data it will leave data_loaded == false.
+        if (!this->data_loaded) {
+            std::cerr << "Training aborted: no training data available." << std::endl;
+            // Load in a blank network of random values
+            NetworkData network_data = NetworkData();
+            network_data.SaveNetworkToSaved(neural_network, 0.0);
+            delete neural_network;
+            return;
+        }
+    }
 
     // Main training loop: run "num_epochs" epochs of learning.
     // Learning

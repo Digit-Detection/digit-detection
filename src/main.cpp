@@ -27,8 +27,7 @@ bool MainApp::OnInit() {
     // func_test.runTests();
 
     NetworkData networkData = NetworkData();
-    NetworkData network_data = NetworkData();
-    // NeuralNetwork* network = network_data.LoadNetworkFromSaved();
+    // NeuralNetwork* network = networkData.LoadNetworkFromSaved();
     NetworkSettings* settings = new NetworkSettings();
 
     // ARCHITECTURE
@@ -48,7 +47,7 @@ bool MainApp::OnInit() {
     std::cout << "Neural : Loading Training Data" << std::endl;
     network_trainer.LoadData();
     std::cout << "Neural : Training Network" << std::endl;
-    network_trainer.StartTrainingSession(1); // Amount trained. Change this when testing program.
+    network_trainer.StartTrainingSession(3); // Amount trained. Change this when testing program.
 
     delete[] layer_sizes;
     delete settings;
