@@ -40,7 +40,7 @@ void DigitButton::OnClick(wxCommandEvent& event) {
         ShowDrawing* newDrawing = new ShowDrawing(resampled, CONSTANTS_H::DESTY, CONSTANTS_H::DESTX, this->submitValue, 10);
         if (resampled) {
             try {
-                DataPoint* dp = new DataPoint(resampled, CONSTANTS_H::DESTX * CONSTANTS_H::DESTY, this->submitValue, CONSTANTS_H::NUMDIGITS);
+                DataPoint* dp = new DataPoint(resampled, CONSTANTS_H::DESTX * CONSTANTS_H::DESTY, this->submitValue, CONSTANTS_H::output_layer_size);
                 // Append this single resized drawing to data/user_drawings.bin.
                 // DataSet::AppendDataPoint uses std::ios::app and will create the file if it doesn't exist yet.
                 DataSet::AppendDataPoint(dp, "data/user_drawings.bin");

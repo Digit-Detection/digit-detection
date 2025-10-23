@@ -19,8 +19,8 @@ class Leaderboard : public wxScrolledWindow {
             : wxScrolledWindow(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL)
         {
             // =========== Sort Leaderboard =============
-            std::vector<std::pair<int, double>> payload(CONSTANTS_H::NUMDIGITS); // {<value, probability>}
-            for (int i = 0; i < CONSTANTS_H::NUMDIGITS; i++) {
+            std::vector<std::pair<int, double>> payload(CONSTANTS_H::output_layer_size); // {<value, probability>}
+            for (int i = 0; i < CONSTANTS_H::output_layer_size; i++) {
                 payload[i] = {numValues[i], probability[i]};
             }
             sort(payload.begin(), payload.end(), [](const std::pair<int, double>& a, const std::pair<int, double>& b) {
@@ -34,7 +34,7 @@ class Leaderboard : public wxScrolledWindow {
 
             // ================ Insert Content ====================
             wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
-            for (int i = 0; i < CONSTANTS_H::NUMDIGITS; i++) {
+            for (int i = 0; i < CONSTANTS_H::output_layer_size; i++) {
                 wxStaticText* label = new wxStaticText(this, wxID_ANY, textPrettify(payload[i].first, payload[i].second));
                 sizer->Add(label, 0, wxALL, 5);
             }
@@ -72,8 +72,8 @@ class Frame : public wxFrame {
     public:
         // Create unresizeable frame
         Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName, wxDefaultPosition, wxSize(CANX * CONSTANTS_H::CANSCALE, CANY * CONSTANTS_H::CANSCALE), wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX)) {
-            this->custInt = customInts(CONSTANTS_H::NUMDIGITS);
-            this->custDbl = customDouble(CONSTANTS_H::NUMDIGITS);
+            this->custInt = customInts(CONSTANTS_H::output_layer_size);
+            this->custDbl = customDouble(CONSTANTS_H::output_layer_size);
             myLeaderboard = new Leaderboard(this, custInt, custDbl);
             myLeaderboard->SetMinSize(wxSize(-1, 150));
 

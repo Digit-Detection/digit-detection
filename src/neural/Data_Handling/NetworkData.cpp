@@ -1,4 +1,5 @@
 #include "neural/Data_Handling/NetworkData.h"
+#include "constants.h"
 #include <fstream>
 #include <iostream>
 
@@ -19,7 +20,13 @@ NeuralNetwork* NetworkData::LoadNetworkFromSaved() {
     // If the file is missing or cannot be opened, return nullptr and callers should handle missing network.
     if (!file.is_open()) {
         std::cerr << "Could not open " << filename << std::endl;
-        return nullptr;
+        // Return a blank network with random weights and bias values
+        int* layers = new int[3];
+        layers[0] = CONSTANTS_H::input_layer_size;
+        layers[1] = 5;
+        layers[2] = CONSTANTS_H::output_layer_size;
+        NeuralNetwork* network = new NeuralNetwork(layers, 3);
+        return network;
     }
 
     // Accuracy reading

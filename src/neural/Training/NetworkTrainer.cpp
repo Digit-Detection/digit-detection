@@ -160,7 +160,7 @@ void NetworkTrainer::LoadData() {
                 std::ifstream fl(p.second, std::ios::binary);
                 if (fi && fl) {
                     fi.close(); fl.close();
-                    bool ok = MnistLoader::ConvertToBin(p.first, p.second, mnist_bin_path, CONSTANTS_H::NUMDIGITS);
+                    bool ok = MnistLoader::ConvertToBin(p.first, p.second, mnist_bin_path, CONSTANTS_H::output_layer_size);
                     if (ok) {
                         std::cout << "Converted MNIST IDX -> " << mnist_bin_path << "\n";
                     }
@@ -241,7 +241,7 @@ void NetworkTrainer::LoadData() {
                     if (fi && fl) {
                         fi.close(); fl.close();
                         const std::string out_bin = "data/mnist.bin";
-                        bool ok = MnistLoader::ConvertToBin(p.first, p.second, out_bin, CONSTANTS_H::NUMDIGITS);
+                        bool ok = MnistLoader::ConvertToBin(p.first, p.second, out_bin, CONSTANTS_H::output_layer_size);
                         if (ok) {
                             mnist_bin_to_use = out_bin;
                             std::cout << "Converted MNIST IDX -> " << out_bin << "\n";
@@ -268,7 +268,7 @@ void NetworkTrainer::LoadData() {
                     for (int i = 0; i < n; ++i) {
                         int width = (arr[i]->getInputsLength() == CONSTANTS_H::DESTX * CONSTANTS_H::DESTY) ? CONSTANTS_H::DESTX : 28;
                         int height = (arr[i]->getInputsLength() == CONSTANTS_H::DESTX * CONSTANTS_H::DESTY) ? CONSTANTS_H::DESTY : 28;
-                        std::vector<DataPoint*> aug = Augmentations::GenerateAugmentedDataPoints(arr[i]->getInputs(), width, height, arr[i]->getLabel(), CONSTANTS_H::NUMDIGITS);
+                        std::vector<DataPoint*> aug = Augmentations::GenerateAugmentedDataPoints(arr[i]->getInputs(), width, height, arr[i]->getLabel(), CONSTANTS_H::output_layer_size);
                         all_augmented.insert(all_augmented.end(), aug.begin(), aug.end());
                     }
                 };
@@ -277,7 +277,7 @@ void NetworkTrainer::LoadData() {
                 if (mnist_n > 0 && mnist_arr != nullptr) augment_and_append(mnist_arr, mnist_n);
 
                 for (int i = 0; i < user_n; ++i) {
-                    std::vector<DataPoint*> aug = Augmentations::GenerateAugmentedDataPoints(user_arr[i]->getInputs(), user_arr[i]->getInputsLength() == CONSTANTS_H::DESTX * CONSTANTS_H::DESTY ? CONSTANTS_H::DESTX : 28, user_arr[i]->getInputsLength() == CONSTANTS_H::DESTX * CONSTANTS_H::DESTY ? CONSTANTS_H::DESTY : 28, user_arr[i]->getLabel(), CONSTANTS_H::NUMDIGITS);
+                    std::vector<DataPoint*> aug = Augmentations::GenerateAugmentedDataPoints(user_arr[i]->getInputs(), user_arr[i]->getInputsLength() == CONSTANTS_H::DESTX * CONSTANTS_H::DESTY ? CONSTANTS_H::DESTX : 28, user_arr[i]->getInputsLength() == CONSTANTS_H::DESTX * CONSTANTS_H::DESTY ? CONSTANTS_H::DESTY : 28, user_arr[i]->getLabel(), CONSTANTS_H::output_layer_size);
                     all_augmented.insert(all_augmented.end(), aug.begin(), aug.end());
                 }
                 std::cout << "Saving augmented dataset to " << dataset_path << " (" << all_augmented.size() << " datapoints)...\n";

@@ -28,8 +28,8 @@ void Leaderboard::UpdateLeaderboard(double* probability) {
     this->sizer->Clear(true); // true = delete windows
     
     // =========== Sort Leaderboard =============
-    std::vector<std::pair<int, double>> payload(CONSTANTS_H::NUMDIGITS); // {<value, probability>}
-    for (int i = 0; i < CONSTANTS_H::NUMDIGITS; i++) {
+    std::vector<std::pair<int, double>> payload(CONSTANTS_H::output_layer_size); // {<value, probability>}
+    for (int i = 0; i < CONSTANTS_H::output_layer_size; i++) {
         payload[i] = {i, probability[i]};
     }
     sort(payload.begin(), payload.end(), [&](const std::pair<int, double>& a, const std::pair<int, double>& b) {
@@ -40,7 +40,7 @@ void Leaderboard::UpdateLeaderboard(double* probability) {
     });
     
     // ================ Insert Content ====================
-    for (int i = 0; i < CONSTANTS_H::NUMDIGITS; i++) {
+    for (int i = 0; i < CONSTANTS_H::output_layer_size; i++) {
         wxStaticText* label = new wxStaticText(this, wxID_ANY, textPrettify(payload[i].first, payload[i].second));
         this->sizer->Add(label, 0, wxALL, 5);
     }

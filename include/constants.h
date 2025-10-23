@@ -19,8 +19,9 @@ const int mini_batch_size = 32; // Batch size of learning data
 const double momentum = 0.9;    // Momentum of velocities in gradient descent
 const double regularisation = 0.0001;   // Regularisation constant for keeping velocities realistic, prevents overflow
 
-// DATA CONSTANTS
-const int NUMDIGITS = 10; // Record digits from 0 to 9 (10 digit total)
+// NETWORK ARCHETECTURE
+const int input_layer_size = 28 * 28; // Input layer of neural network size
+const int output_layer_size = 10; // Output layer of neural network size
 
 // Destination (resample) size for saved drawings. Change these to alter
 // the size drawings are scaled to before being stored / used for training.

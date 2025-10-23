@@ -33,10 +33,10 @@ bool MainApp::OnInit() {
     // ARCHITECTURE
     const int num_layers = 4;
     int* layer_sizes = new int[num_layers];
-    layer_sizes[0] = 28 * 28;   // input dimension
+    layer_sizes[0] = CONSTANTS_H::input_layer_size;   // input dimension
     layer_sizes[1] = 64;   // hidden layers
     layer_sizes[2] = 16;
-    layer_sizes[3] = 10;   // output layer (two classes)
+    layer_sizes[3] = CONSTANTS_H::output_layer_size;   // output layer (two classes)
 
     // Configure Settings
     settings->setLayerSizes(layer_sizes);
