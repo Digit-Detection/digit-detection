@@ -18,7 +18,7 @@ Image of gui (left) and example images of submitted drawing (right) are shown be
 
 The gif below shows a user drawing the number "5" and the neural network ranks which number it closely resembles. The submitted image is later submitted and trained to further improve the AI 
 <p align="center">
-  <img src="docs/demo.gif" width="300">
+  <img src="docs/demo1.gif" width="300">
 </p>
 
 ## Requirements
