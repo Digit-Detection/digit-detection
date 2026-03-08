@@ -3,7 +3,7 @@
 A C++ application for recognizing handwritten digits with a neural network using wxWidgets for GUI rendering.
 
 Image of gui (left) and example images of submitted drawing (right) are shown below
-<table style="border: none;">
+<table align="center" style="border: none;">
   <tr>
     <td>
       <p align="center"><b>GUI Interface</b></p>
