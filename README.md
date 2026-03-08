@@ -2,6 +2,25 @@
 
 A C++ application for recognizing handwritten digits with a neural network using wxWidgets for GUI rendering.
 
+The gif below shows a user drawing the number "5" and the neural network ranks which number it closely resembles. The image is later submitted and trained to further improve the AI 
+<p align="center">
+  <img src="docs/demo.gif" width="300">
+</p>
+
+Image of gui (left) and example images of submitted drawing (right) are shown below
+<table style="border: none;">
+  <tr>
+    <td>
+      <p align="center"><b>GUI Interface</b></p>
+      <img src="docs/img1.png" width="350">
+    </td>
+    <td>
+      <p align="center"><b>Submitted Drawings</b></p>
+      <img src="docs/img2.png" width="350">
+    </td>
+  </tr>
+</table>
+
 ## Requirements
 - Debian-based system (Recommended Ubuntu 24.04 or later)
 - CMake 

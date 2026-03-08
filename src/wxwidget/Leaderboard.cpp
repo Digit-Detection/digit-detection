@@ -42,6 +42,7 @@ void Leaderboard::UpdateLeaderboard(double* probability) {
     // ================ Insert Content ====================
     for (int i = 0; i < CONSTANTS_H::output_layer_size; i++) {
         wxStaticText* label = new wxStaticText(this, wxID_ANY, textPrettify(payload[i].first, payload[i].second));
+        label->SetForegroundColour(wxColour(230, 230, 230));
         this->sizer->Add(label, 0, wxALL, 5);
     }
     

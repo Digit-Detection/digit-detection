@@ -20,11 +20,11 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
     
     // =========== Develop Containers ===========
     wxPanel* canvasPanel = new wxPanel(this, wxID_ANY);
-    canvasPanel->SetBackgroundColour(wxColor(100, 100, 200));
+    canvasPanel->SetBackgroundColour(wxColor(230, 230, 230));
     canvasPanel->SetMinSize(wxSize(CONSTANTS_H::CANX * CONSTANTS_H::CANSCALE, CONSTANTS_H::CANY * CONSTANTS_H::CANSCALE));
     
     wxPanel* toolPanel = new wxPanel(this, wxID_ANY);
-    toolPanel->SetBackgroundColour(wxColor(100, 200, 100));
+    toolPanel->SetBackgroundColour(wxColor(50, 50, 50));
     toolPanel->SetMinSize(wxSize(CONSTANTS_H::TOOLSIZE, CONSTANTS_H::CANY * CONSTANTS_H::CANSCALE));
     std::cout << "Frame : Sizers Developed" << std::endl;
     // =========== Develop Canvas ===========
@@ -39,11 +39,11 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
     
     // =========== Develop UI Buttons ===========
     wxPanel* buttonPanel = new wxPanel(toolPanel, wxID_ANY);
-    buttonPanel->SetBackgroundColour(wxColor(200, 200, 50));
+    buttonPanel->SetBackgroundColour(wxColor(230, 230, 230));
     
     // -- Clear Button/Undo --
     wxPanel* clearBPanel = new wxPanel(buttonPanel, wxID_ANY);
-    clearBPanel->SetBackgroundColour(wxColor(200, 50, 50));
+    clearBPanel->SetBackgroundColour(wxColor(230, 230, 230));
     
     ClearButton* clearButton = new ClearButton(clearBPanel, [drawCanvas]() {
         drawCanvas->ClearCanvas();
@@ -64,7 +64,7 @@ Frame::Frame(std::string windowName) : wxFrame(nullptr, wxID_ANY, windowName,
     
     // -- Submission Buttons -- 
     wxPanel* numPanel = new wxPanel(buttonPanel, wxID_ANY);
-    numPanel->SetBackgroundColour(wxColor(50, 50, 200));
+    numPanel->SetBackgroundColour(wxColor(230, 230, 230));
     NumPad* submissionPad = new NumPad(numPanel, drawCanvas);
     
     wxBoxSizer* numSizer = new wxBoxSizer(wxVERTICAL);

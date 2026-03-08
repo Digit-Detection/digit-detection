@@ -47,7 +47,7 @@ bool MainApp::OnInit() {
     std::cout << "Neural : Loading Training Data" << std::endl;
     network_trainer.LoadData();
     std::cout << "Neural : Training Network" << std::endl;
-    network_trainer.StartTrainingSession(3); // Amount trained. Change this when testing program.
+    network_trainer.StartTrainingSession(0); // Amount trained. Change this when testing program.
 
     delete[] layer_sizes;
     delete settings;
